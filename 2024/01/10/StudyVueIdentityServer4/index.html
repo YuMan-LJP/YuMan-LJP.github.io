@@ -1,0 +1,918 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="YuMan-LJP">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="学习IdentityServer4搭建一套授权认证系统，并且使用vue进行前后的分离             1.搭建后端授权认证服务器1.1.搭建IdentityServer4服务器 创建一个空的.net core web api项目（项目名：IdentityServer），5001端口 添加NuGet包：IdentityServer4  1.2.快速搭建Identit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【3】学习IdentityServer4，搭建授权认证系统">
+<meta property="og:url" content="http://example.com/2024/01/10/StudyVueIdentityServer4/index.html">
+<meta property="og:site_name" content="YuMan-LJP&#39;s Blog">
+<meta property="og:description" content="学习IdentityServer4搭建一套授权认证系统，并且使用vue进行前后的分离             1.搭建后端授权认证服务器1.1.搭建IdentityServer4服务器 创建一个空的.net core web api项目（项目名：IdentityServer），5001端口 添加NuGet包：IdentityServer4  1.2.快速搭建Identit">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/StudyVueIdentityServer4/img1.jpg">
+<meta property="og:image" content="http://example.com/img/StudyVueIdentityServer4/img3.jpg">
+<meta property="og:image" content="http://example.com/img/StudyVueIdentityServer4/img5.jpg">
+<meta property="og:image" content="http://example.com/img/StudyVueIdentityServer4/img4.jpg">
+<meta property="og:image" content="http://example.com/img/StudyVueIdentityServer4/img2.jpg">
+<meta property="article:published_time" content="2024-01-10T11:08:18.000Z">
+<meta property="article:modified_time" content="2024-01-19T17:30:00.000Z">
+<meta property="article:author" content="YuMan-LJP">
+<meta property="article:tag" content="IdentityServer4">
+<meta property="article:tag" content="vue">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/StudyVueIdentityServer4/img1.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>【3】学习IdentityServer4，搭建授权认证系统 - YuMan-LJP&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>YuMan-LJP&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【3】学习IdentityServer4，搭建授权认证系统"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-01-10 11:08" pubdate>
+          2024年1月10日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          31 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【3】学习IdentityServer4，搭建授权认证系统</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年1月19日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <div class="note note-info">
+            <p>学习IdentityServer4搭建一套授权认证系统，并且使用vue进行前后的分离</p>
+          </div>
+
+<h1 id="1-搭建后端授权认证服务器"><a href="#1-搭建后端授权认证服务器" class="headerlink" title="1.搭建后端授权认证服务器"></a>1.搭建后端授权认证服务器</h1><h2 id="1-1-搭建IdentityServer4服务器"><a href="#1-1-搭建IdentityServer4服务器" class="headerlink" title="1.1.搭建IdentityServer4服务器"></a>1.1.搭建IdentityServer4服务器</h2><ul>
+<li>创建一个空的.net core web api项目（项目名：IdentityServer），5001端口</li>
+<li>添加NuGet包：IdentityServer4</li>
+</ul>
+<h2 id="1-2-快速搭建IdentityServer4的模板UI页面"><a href="#1-2-快速搭建IdentityServer4的模板UI页面" class="headerlink" title="1.2.快速搭建IdentityServer4的模板UI页面"></a>1.2.快速搭建IdentityServer4的模板UI页面</h2><p>（1）安装模板</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cmd">dotnet new -i identityserver4.templates<br>dotnet new is4ui<br></code></pre></td></tr></table></figure>
+<p>如果以上执行失败，可以去源代码下载即可， <code>https://github.com/IdentityServer/IdentityServer4.Quickstart.UI</code> ，将（Quickstart，Views，wwwroot三个文件夹直接复制到项目根目录即可）</p>
+<p>（2）建一个静态的配置类：IdentityConfig</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title">IdentityConfig</span><br>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> IEnumerable&lt;IdentityResource&gt; IdentityResources =&gt;<br>        <span class="hljs-keyword">new</span> IdentityResource[]<br>        &#123;<br>            <span class="hljs-keyword">new</span> IdentityResources.OpenId(),<br>            <span class="hljs-keyword">new</span> IdentityResources.Profile(),<br>        &#125;;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> IEnumerable&lt;ApiScope&gt; ApiScopes =&gt;<br>       <span class="hljs-keyword">new</span> ApiScope[]<br>       &#123;<br>            <span class="hljs-keyword">new</span> ApiScope(<span class="hljs-string">&quot;api1&quot;</span>, <span class="hljs-string">&quot;My API&quot;</span>)<br>       &#125;;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> IEnumerable&lt;Client&gt; Clients =&gt;<br>       <span class="hljs-keyword">new</span> Client[]<br>       &#123;<br>            <span class="hljs-keyword">new</span> Client<br>            &#123;<br>                ClientId = <span class="hljs-string">&quot;client&quot;</span>,<br><br>                <span class="hljs-comment">// no interactive user, use the clientid/secret for authentication</span><br>                AllowedGrantTypes = GrantTypes.ClientCredentials,<br><br>                <span class="hljs-comment">// secret for authentication</span><br>                ClientSecrets =<br>                &#123;<br>                    <span class="hljs-keyword">new</span> Secret(<span class="hljs-string">&quot;D0C6E0F9-1A36-43E9-9E25-72240088DE1C&quot;</span>.Sha256())<br>                &#125;,<br><br>                <span class="hljs-comment">// scopes that client has access to</span><br>                AllowedScopes = &#123; <span class="hljs-string">&quot;api1&quot;</span> &#125;<br>            &#125;,<br>       &#125;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>（3）在Program中引入</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs C#">services.AddControllersWithViews();<span class="hljs-comment">//补充</span><br>services.AddIdentityServer()<br>    .AddDeveloperSigningCredential()<br>    .AddInMemoryIdentityResources(IdentityConfig.IdentityResources)<span class="hljs-comment">//声明可以获得的资源</span><br>    .AddInMemoryApiScopes(IdentityConfig.ApiScopes)<span class="hljs-comment">//声明API范围</span><br>    .AddInMemoryClients(IdentityConfig.Clients)<span class="hljs-comment">//声明客户端</span><br>    .AddTestUsers(TestUsers.Users);<span class="hljs-comment">//使用默认测试用户</span><br><br>app.UseIdentityServer();<span class="hljs-comment">//添加IdentityServer中间件</span><br>app.UseEndpoints(endpoints =&gt;<br>&#123;<br>    endpoints.MapControllers();<br>    endpoints.MapDefaultControllerRoute();<span class="hljs-comment">//补充</span><br>&#125;);<br></code></pre></td></tr></table></figure>
+
+ </details>
+
+
+<h1 id="2-搭建API资源服务器"><a href="#2-搭建API资源服务器" class="headerlink" title="2.搭建API资源服务器"></a>2.搭建API资源服务器</h1><h2 id="2-1-再新建一个WebApi空项目（项目名：WebApi1），5002端口"><a href="#2-1-再新建一个WebApi空项目（项目名：WebApi1），5002端口" class="headerlink" title="2.1.再新建一个WebApi空项目（项目名：WebApi1），5002端口"></a>2.1.再新建一个WebApi空项目（项目名：WebApi1），5002端口</h2><p>（1）Program配置相关信息，需要添加NuGet包：Microsoft.AspNetCore.Authentication.JwtBearer</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs C#">services.AddAuthentication(<span class="hljs-string">&quot;Bearer&quot;</span>)<br>    .AddJwtBearer(<span class="hljs-string">&quot;Bearer&quot;</span>, options =&gt;<br>    &#123;<br>        options.Authority = <span class="hljs-string">&quot;https://localhost:5001&quot;</span>;<br><br>        options.TokenValidationParameters = <span class="hljs-keyword">new</span> TokenValidationParameters<br>        &#123;<br>            ValidateAudience = <span class="hljs-literal">false</span><br>        &#125;;<br>    &#125;); <br>services.AddAuthorization(options =&gt;<br>    &#123;<br>        options.AddPolicy(<span class="hljs-string">&quot;ApiScope&quot;</span>, policy =&gt;<br>        &#123;<br>            policy.RequireAuthenticatedUser();<br>            policy.RequireClaim(<span class="hljs-string">&quot;scope&quot;</span>, <span class="hljs-string">&quot;api1&quot;</span>);<br>        &#125;);<br>    &#125;);<br><br>......<span class="hljs-comment">//省略代码</span><br><br>app.UseAuthentication();<br>app.UseAuthorization();<br><br>app.UseEndpoints(endpoints =&gt;<br>&#123;<br>    endpoints.MapControllers()<br>        .RequireAuthorization(<span class="hljs-string">&quot;ApiScope&quot;</span>);<span class="hljs-comment">//要求所有请求都要满足授权策略ApiScope</span><br>&#125;);<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>（2）Controllers文件夹下，新建一个控制器IdentityController</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs C#">[<span class="hljs-meta">Route(<span class="hljs-string">&quot;identity&quot;</span>)</span>]<br>[<span class="hljs-meta">Authorize</span>]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">IdentityController</span> : <span class="hljs-title">Controller</span><br>&#123;<br>    [<span class="hljs-meta">HttpGet</span>]<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">Index</span>()</span><br>    &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> JsonResult(<span class="hljs-keyword">from</span> c <span class="hljs-keyword">in</span> User.Claims <span class="hljs-keyword">select</span> <span class="hljs-keyword">new</span> &#123; c.Type, c.Value &#125;);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<h2 id="2-2-验证搭建的服务"><a href="#2-2-验证搭建的服务" class="headerlink" title="2.2.验证搭建的服务"></a>2.2.验证搭建的服务</h2><p>创建一个控制台项目（项目名：TestClient），测试访问授权服务器获取token，再使用token访问资源服务器的identity接口</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">async</span> Task <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-built_in">string</span>[] args</span>)</span><br>&#123;<br>    Console.WriteLine(<span class="hljs-string">&quot;开始测试&quot;</span>);<br><br>    Console.WriteLine(<span class="hljs-string">&quot;访问授权认证服务器&quot;</span>);<br>    <span class="hljs-keyword">var</span> client = <span class="hljs-keyword">new</span> HttpClient();<br>    <span class="hljs-keyword">var</span> disco = <span class="hljs-keyword">await</span> client.GetDiscoveryDocumentAsync(<span class="hljs-string">&quot;https://localhost:5001&quot;</span>);<br>    <span class="hljs-keyword">if</span> (disco.IsError)<br>    &#123;<br>        Console.WriteLine(disco.Error);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    Console.WriteLine(<span class="hljs-string">&quot;请求token&quot;</span>);<br>    <span class="hljs-keyword">var</span> tokenResponse = <span class="hljs-keyword">await</span> client.RequestClientCredentialsTokenAsync(<span class="hljs-keyword">new</span> ClientCredentialsTokenRequest<br>    &#123;<br>        Address = disco.TokenEndpoint,<br><br>        ClientId = <span class="hljs-string">&quot;client&quot;</span>,<br>        ClientSecret = <span class="hljs-string">&quot;D0C6E0F9-1A36-43E9-9E25-72240088DE1C&quot;</span>,<br>        Scope = <span class="hljs-string">&quot;api1&quot;</span><br>    &#125;);<br><br>    <span class="hljs-keyword">if</span> (tokenResponse.IsError)<br>    &#123;<br>        Console.WriteLine(tokenResponse.Error);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    Console.WriteLine(tokenResponse.Json);<br><br>    Console.WriteLine(<span class="hljs-string">&quot;访问资源服务器&quot;</span>);<br>    <span class="hljs-keyword">var</span> apiClient = <span class="hljs-keyword">new</span> HttpClient();<br>    apiClient.SetBearerToken(tokenResponse.AccessToken);<br><br>    <span class="hljs-keyword">var</span> response = <span class="hljs-keyword">await</span> apiClient.GetAsync(<span class="hljs-string">&quot;https://localhost:5002/identity&quot;</span>);<br>    <span class="hljs-keyword">if</span> (!response.IsSuccessStatusCode)<br>    &#123;<br>        Console.WriteLine(response.StatusCode);<br>        Console.WriteLine(<span class="hljs-string">&quot;失败&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">else</span><br>    &#123;<br>        <span class="hljs-keyword">var</span> content = <span class="hljs-keyword">await</span> response.Content.ReadAsStringAsync();<br>        Console.WriteLine(content);<br>        Console.WriteLine(<span class="hljs-string">&quot;成功&quot;</span>);<br>    &#125;<br><br>    Console.ReadLine();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p><img src="/../img/StudyVueIdentityServer4/img1.jpg" srcset="/img/loading.gif" lazyload alt="后端项目" title="后端项目"></p>
+<p>完成以上，同时启动三个项目（IdentityServer、WebApi1、TestClient），TestClient控制台程序就会访问IdentityServer获取token，并带上token即可成功访问WebApi1的identity接口</p>
+<h1 id="3-搭建前端Vue"><a href="#3-搭建前端Vue" class="headerlink" title="3.搭建前端Vue"></a>3.搭建前端Vue</h1><p>首先现要搭建vue的环境，前提至少需要安装好npm，node</p>
+<h2 id="安装vue"><a href="#安装vue" class="headerlink" title="安装vue"></a>安装vue</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install vue -g<br></code></pre></td></tr></table></figure>
+<h2 id="安装命令行工具"><a href="#安装命令行工具" class="headerlink" title="安装命令行工具"></a>安装命令行工具</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install vue-cli -g <span class="hljs-comment"># 低于vue3.x版本</span><br><br>npm install @vue/cli -g <span class="hljs-comment"># 最新版本（本篇文章都用最新的做）</span><br>npm install -g @vue/cli-init <span class="hljs-comment"># 最新版本想用init指令要额外再安装一个init指令</span><br><br>vue List <span class="hljs-comment"># 安装好之后查看命令</span><br></code></pre></td></tr></table></figure>
+
+<p>3.x以上版本支持三种方式创建vue项目</p>
+<ul>
+<li>vue create 项目名称</li>
+<li>vue init webpack 项目名</li>
+<li>vue ui</li>
+</ul>
+<p>以下搭建使用vue create来搭建，都尽量使用当前最新版本的，在解决方案StudyVueIdentityServer4文件夹下进行搭建，项目名：vueclient1</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">vue create vueclient1 <span class="hljs-comment"># 选择3版本，等待安装完成</span><br></code></pre></td></tr></table></figure>
+<p>然后进入项目根目录，即 <code>cd vueclient1</code> 然后运行项目 <code>npm run serve</code>，默认端口8080，后续会改为5003</p>
+<h2 id="安装必要的路由插件"><a href="#安装必要的路由插件" class="headerlink" title="安装必要的路由插件"></a>安装必要的路由插件</h2><p>npm install vue-router@4</p>
+<p>然后src文件夹下新增router文件夹，里面再建一个router.js</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> &#123; createRouter, createWebHashHistory &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vue-router&#x27;</span><br><span class="hljs-comment">//import SamplePage from &#x27;../components/SamplePage.vue&#x27;//样例代码，怎么引入组件页面</span><br><br><span class="hljs-keyword">const</span> routes = [<br>    <span class="hljs-comment">// &#123;</span><br>    <span class="hljs-comment">//     path: &#x27;/&#x27;,</span><br>    <span class="hljs-comment">//     component:SamplePage</span><br>    <span class="hljs-comment">// &#125;,</span><br>]<br><br><span class="hljs-keyword">const</span> router = <span class="hljs-title function_">createRouter</span>(&#123;<br>    <span class="hljs-attr">history</span>:<span class="hljs-title function_">createWebHashHistory</span>(),<span class="hljs-comment">//createWebHistory</span><br>    routes,<br>&#125;)<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> router;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>然后在main.js引入</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs js">...<span class="hljs-comment">//省略代码</span><br><span class="hljs-keyword">import</span> &#123; createApp &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vue&#x27;</span><br><span class="hljs-keyword">import</span> <span class="hljs-title class_">App</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./App.vue&#x27;</span><br><span class="hljs-keyword">import</span> router <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./router/router&#x27;</span><span class="hljs-comment">//引入路由js</span><br><br><span class="hljs-title function_">createApp</span>(<span class="hljs-title class_">App</span>).<span class="hljs-title function_">use</span>(router).<span class="hljs-title function_">mount</span>(<span class="hljs-string">&#x27;#app&#x27;</span>)<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<h2 id="安装axios插件"><a href="#安装axios插件" class="headerlink" title="安装axios插件"></a>安装axios插件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install axios<br></code></pre></td></tr></table></figure>
+
+<p>新建一个request文件夹，在request文件夹里面建一个request.js</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> axios <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;axios&quot;</span>;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">request</span>(<span class="hljs-params">config</span>) &#123;<br><br>    axios.<span class="hljs-property">defaults</span>.<span class="hljs-property">withCredentials</span> = <span class="hljs-literal">true</span>;<br>    <span class="hljs-keyword">const</span> instance = axios.<span class="hljs-title function_">create</span>(&#123;<br>      <span class="hljs-attr">baseURL</span>: <span class="hljs-string">&#x27;/api&#x27;</span>, <span class="hljs-comment">// 通过/api别名指定后端路由</span><br>      <span class="hljs-attr">timeout</span>: <span class="hljs-number">5000</span>,<br>      <span class="hljs-attr">headers</span>:&#123;<br>      &#125;,<br>    &#125;)<br>  <br>    <span class="hljs-comment">// axios的拦截器(类似python的中间件的request)</span><br>    instance.<span class="hljs-property">interceptors</span>.<span class="hljs-property">request</span>.<span class="hljs-title function_">use</span>(<span class="hljs-function"><span class="hljs-params">aaa</span> =&gt;</span> &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(aaa);<br>      <span class="hljs-comment">// 多用于登录时的cookies判断</span><br>      <span class="hljs-keyword">return</span> aaa<br>    &#125;, <span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(err);<br>    &#125;)<br>    <span class="hljs-comment">// 数据返回拦截</span><br>    instance.<span class="hljs-property">interceptors</span>.<span class="hljs-property">response</span>.<span class="hljs-title function_">use</span>(<span class="hljs-function"><span class="hljs-params">aaa</span> =&gt;</span> &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(aaa);<br>      <span class="hljs-comment">// 多用于登录时的cookies判断</span><br>      <span class="hljs-keyword">return</span> aaa.<span class="hljs-property">data</span><br>    &#125;, <span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(err);<br>    &#125;)<br>    <span class="hljs-comment">// 直接返回</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">instance</span>(config)<br>  <br>  &#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>绑定代理，并修改端口为5003<br>在vue.config.js里面增加代理设置</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> &#123; defineConfig &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@vue/cli-service&#x27;</span>)<br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = <span class="hljs-title function_">defineConfig</span>(&#123;<br>  <span class="hljs-attr">transpileDependencies</span>: <span class="hljs-literal">true</span>,<br>  <span class="hljs-attr">devServer</span>:&#123;<br>    <span class="hljs-attr">port</span>: <span class="hljs-number">5003</span>,<span class="hljs-comment">//端口</span><br>    <span class="hljs-comment">//https: true,//是否开启https</span><br>    <span class="hljs-comment">// 代理</span><br>    <span class="hljs-attr">proxy</span>: &#123;<br>      <span class="hljs-string">&#x27;/api&#x27;</span>: &#123;<br>          <span class="hljs-attr">target</span>: <span class="hljs-string">&#x27;https://localhost:5001/&#x27;</span>, <span class="hljs-comment">// 代理后台服务器地址</span><br>          <span class="hljs-attr">changeOrigin</span>: <span class="hljs-literal">true</span>, <span class="hljs-comment">//允许跨域            </span><br>          <span class="hljs-attr">pathRewrite</span>: &#123;<br>            <span class="hljs-string">&#x27;/api&#x27;</span>: <span class="hljs-string">&#x27;&#x27;</span><span class="hljs-comment">//将地址中标记的/api都替换掉</span><br>          &#125;<br>      &#125;<br>    &#125;<br>  &#125;,<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>验证是否可以正常请求，helloWorld.vue代码调整如下，加一个按钮，点击会访问IdentityServer4服务器的默认路径（ <code>https://localhost:5001/weatherforecast</code> ）：</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs js">&lt;template&gt;<br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hello&quot;</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>&#123;&#123; msg &#125;&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;test()&quot;</span>&gt;</span>测试<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>&lt;/template&gt;<br><br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">import</span> &#123;request&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@/request/request&quot;</span></span></span><br><span class="language-javascript"><span class="language-xml"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> &#123;</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;HelloWorld&#x27;</span>,</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-attr">props</span>: &#123;</span></span><br><span class="language-javascript"><span class="language-xml">    <span class="hljs-attr">msg</span>: <span class="hljs-title class_">String</span></span></span><br><span class="language-javascript"><span class="language-xml">  &#125;,</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-attr">methods</span>:&#123;</span></span><br><span class="language-javascript"><span class="language-xml">    <span class="hljs-title function_">test</span>(<span class="hljs-params"></span>)&#123;</span></span><br><span class="language-javascript"><span class="language-xml">      <span class="hljs-comment">//测试跨域访问</span></span></span><br><span class="language-javascript"><span class="language-xml">      request.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/weatherforecast&#x27;</span>).<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">data</span>=&gt;</span>&#123;</span></span><br><span class="language-javascript"><span class="language-xml">        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(data);</span></span><br><span class="language-javascript"><span class="language-xml">      &#125;).<span class="hljs-title function_">catch</span>(<span class="hljs-function"><span class="hljs-params">error</span>=&gt;</span>&#123;</span></span><br><span class="language-javascript"><span class="language-xml">        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(error)</span></span><br><span class="language-javascript"><span class="language-xml">      &#125;)</span></span><br><span class="language-javascript"><span class="language-xml">    &#125;</span></span><br><span class="language-javascript"><span class="language-xml">  &#125;</span></span><br><span class="language-javascript"><span class="language-xml">&#125;</span></span><br><span class="language-javascript"><span class="language-xml"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>然后IdentityServer4服务器开启允许跨域访问<br>Program调整如下：</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs C#"> <span class="hljs-comment">//JS-allow Ajax calls to be made from http://localhost:5003 to https://localhost:5001.</span><br> services.AddCors(options =&gt;<br> &#123;<br>     <span class="hljs-comment">//this defines a CORS policy called &quot;default&quot;</span><br>     options.AddPolicy(<span class="hljs-string">&quot;default&quot;</span>, policy =&gt;<br>     &#123;<br>         policy.WithOrigins(<span class="hljs-string">&quot;http://localhost:5003&quot;</span>)<br>             .AllowAnyHeader()<br>             .AllowAnyMethod();<br>     &#125;);<br> &#125;);<br><br>......<span class="hljs-comment">//省略代码</span><br><br><span class="hljs-comment">//JS-Add the CORS middleware to the pipeline in Configure:</span><br>app.UseCors(<span class="hljs-string">&quot;default&quot;</span>);<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>然后启动IdentityServer4服务器和vue，IdentityServer4服务器确保能访问 <code>https://localhost:5001/weatherforecast</code> ，然后访问vue的 <code>http://localhost:5003/</code> ，点击测试按钮，查看浏览器控制台，能得到和后端接口一样的数据就成功了。（特别注意由于后端5001端口是https，第一次访问浏览器可能会由于证书不安全拦截，要在浏览器上确保仍继续访问到页面为止，然后再点击vue的测试按钮）</p>
+<p><img src="/../img/StudyVueIdentityServer4/img3.jpg" srcset="/img/loading.gif" lazyload alt="默认首页" title="默认首页"></p>
+<h1 id="4-前端实现的认证登录"><a href="#4-前端实现的认证登录" class="headerlink" title="4.前端实现的认证登录"></a>4.前端实现的认证登录</h1><h2 id="4-1-安装插件"><a href="#4-1-安装插件" class="headerlink" title="4.1.安装插件"></a>4.1.安装插件</h2><p>npm install oidc-client</p>
+<h3 id="4-1-封装并初始化odic的方法"><a href="#4-1-封装并初始化odic的方法" class="headerlink" title="4.1.封装并初始化odic的方法"></a>4.1.封装并初始化odic的方法</h3><p>在request文件夹里面建一个odic.js</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Oidc</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;oidc-client&quot;</span>;<br><span class="hljs-keyword">var</span> config = &#123;<br>  <span class="hljs-attr">authority</span>: <span class="hljs-string">&quot;https://localhost:5001&quot;</span>,<br>  <span class="hljs-attr">client_id</span>: <span class="hljs-string">&quot;js&quot;</span>,<br>  <span class="hljs-attr">redirect_uri</span>: <span class="hljs-string">&quot;http://localhost:5003/CallBack&quot;</span>,<br>  <span class="hljs-attr">response_type</span>: <span class="hljs-string">&quot;id_token token&quot;</span>,<br>  <span class="hljs-attr">scope</span>: <span class="hljs-string">&quot;openid profile api1&quot;</span>,<br>  <span class="hljs-attr">post_logout_redirect_uri</span>: <span class="hljs-string">&quot;http://localhost:5003/&quot;</span><br>&#125;;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">oidc</span>(<span class="hljs-params"></span>)&#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Oidc</span>.<span class="hljs-title class_">UserManager</span>(config);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+
+<h2 id="4-2-搭建访问组件"><a href="#4-2-搭建访问组件" class="headerlink" title="4.2.搭建访问组件"></a>4.2.搭建访问组件</h2><p>（1）自动跳转登录<br>HelloWorld.vue增加一个按钮</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs js">&lt;template&gt;<br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hello&quot;</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>&#123;&#123; msg &#125;&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;test()&quot;</span>&gt;</span>测试<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-comment">&lt;!-- 增加一个登录按钮 --&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;login()&quot;</span>&gt;</span>登录<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">hr</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">router-view</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">router-view</span>&gt;</span></span><br><span class="language-xml">  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span></span><br><br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">import</span> &#123;request&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@/request/request&quot;</span></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">import</span> &#123;oidc&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/request/odic.js&#x27;</span><span class="hljs-comment">//引入odic方法</span></span></span><br><span class="language-javascript"><span class="language-xml"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> &#123;</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;HelloWorld&#x27;</span>,</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-attr">props</span>: &#123;</span></span><br><span class="language-javascript"><span class="language-xml">    <span class="hljs-attr">msg</span>: <span class="hljs-title class_">String</span></span></span><br><span class="language-javascript"><span class="language-xml">  &#125;,</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-attr">methods</span>:&#123;</span></span><br><span class="language-javascript"><span class="language-xml">    <span class="hljs-title function_">test</span>(<span class="hljs-params"></span>)&#123;</span></span><br><span class="language-javascript"><span class="language-xml">      request.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/weatherforecast&#x27;</span>).<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">response</span>=&gt;</span>&#123;</span></span><br><span class="language-javascript"><span class="language-xml">        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(response);</span></span><br><span class="language-javascript"><span class="language-xml">        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(response.<span class="hljs-property">data</span>)</span></span><br><span class="language-javascript"><span class="language-xml">      &#125;).<span class="hljs-title function_">catch</span>(<span class="hljs-function"><span class="hljs-params">error</span>=&gt;</span>&#123;</span></span><br><span class="language-javascript"><span class="language-xml">        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(error)</span></span><br><span class="language-javascript"><span class="language-xml">      &#125;)</span></span><br><span class="language-javascript"><span class="language-xml">    &#125;,</span></span><br><span class="language-javascript"><span class="language-xml">    <span class="hljs-title function_">login</span>(<span class="hljs-params"></span>)&#123;</span></span><br><span class="language-javascript"><span class="language-xml">      <span class="hljs-title function_">oidc</span>().<span class="hljs-title function_">signinRedirect</span>();<span class="hljs-comment">//自动跳转到登录页面</span></span></span><br><span class="language-javascript"><span class="language-xml">    &#125;</span></span><br><span class="language-javascript"><span class="language-xml">  &#125;</span></span><br><span class="language-javascript"><span class="language-xml">&#125;</span></span><br><span class="language-javascript"><span class="language-xml"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>（2）回调组件<br>新建一个CallBack.vue，登录成功后跳转MyHome路由</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs js">&lt;template&gt;<br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml"></span><br><span class="language-xml">  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>&lt;/template&gt;<br><br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Oidc</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;oidc-client&quot;</span>;</span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">new</span> <span class="hljs-title class_">Oidc</span>.<span class="hljs-title class_">UserManager</span>()</span></span><br><span class="language-javascript"><span class="language-xml">  .<span class="hljs-title function_">signinRedirectCallback</span>()</span></span><br><span class="language-javascript"><span class="language-xml">  .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> &#123;</span></span><br><span class="language-javascript"><span class="language-xml">    <span class="hljs-variable language_">window</span>.<span class="hljs-property">location</span> = <span class="hljs-string">&quot;/#/MyHome&quot;</span>;</span></span><br><span class="language-javascript"><span class="language-xml">  &#125;)</span></span><br><span class="language-javascript"><span class="language-xml">  .<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> &#123;</span></span><br><span class="language-javascript"><span class="language-xml">    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(e);</span></span><br><span class="language-javascript"><span class="language-xml">  &#125;);</span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span>&#123;&#125;</span></span><br><span class="language-javascript"><span class="language-xml"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>（3）登录后页面组件<br>新建MyHome.vue组件</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs js">&lt;template&gt;<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;api&quot;</span>&gt;</span>调用API<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;logout&quot;</span>&gt;</span>退出登录<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">pre</span>&gt;</span>&#123;&#123;res&#125;&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">pre</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>&lt;/template&gt;<br>  <br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">import</span> &#123;oidc&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/request/odic.js&#x27;</span></span></span><br><span class="language-javascript"><span class="language-xml"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> &#123;</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;MyHome&quot;</span>,</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-title function_">data</span>(<span class="hljs-params"></span>) &#123;</span></span><br><span class="language-javascript"><span class="language-xml">      <span class="hljs-keyword">return</span> &#123;</span></span><br><span class="language-javascript"><span class="language-xml">          <span class="hljs-attr">res</span>: <span class="hljs-string">&quot;My Home&quot;</span></span></span><br><span class="language-javascript"><span class="language-xml">      &#125;;</span></span><br><span class="language-javascript"><span class="language-xml">  &#125;,</span></span><br><span class="language-javascript"><span class="language-xml"></span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-attr">methods</span>: &#123;</span></span><br><span class="language-javascript"><span class="language-xml">    <span class="hljs-title function_">api</span>(<span class="hljs-params"></span>) &#123;</span></span><br><span class="language-javascript"><span class="language-xml">      <span class="hljs-keyword">var</span> that=<span class="hljs-variable language_">this</span>;</span></span><br><span class="language-javascript"><span class="language-xml">      <span class="hljs-title function_">oidc</span>().<span class="hljs-title function_">getUser</span>().<span class="hljs-title function_">then</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">user</span>) &#123;</span></span><br><span class="language-javascript"><span class="language-xml">          <span class="hljs-keyword">var</span> url = <span class="hljs-string">&quot;https://localhost:5002/identity&quot;</span>;<span class="hljs-comment">//访问资源服务器获取数据信息</span></span></span><br><span class="language-javascript"><span class="language-xml">  </span></span><br><span class="language-javascript"><span class="language-xml">          <span class="hljs-keyword">var</span> xhr = <span class="hljs-keyword">new</span> <span class="hljs-title class_">XMLHttpRequest</span>();</span></span><br><span class="language-javascript"><span class="language-xml">          xhr.<span class="hljs-title function_">open</span>(<span class="hljs-string">&quot;GET&quot;</span>, url);</span></span><br><span class="language-javascript"><span class="language-xml">          xhr.<span class="hljs-property">onload</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) &#123;</span></span><br><span class="language-javascript"><span class="language-xml">              that.<span class="hljs-property">res</span> = (xhr.<span class="hljs-property">status</span>, <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(xhr.<span class="hljs-property">responseText</span>))</span></span><br><span class="language-javascript"><span class="language-xml">          &#125;;</span></span><br><span class="language-javascript"><span class="language-xml">          xhr.<span class="hljs-title function_">setRequestHeader</span>(<span class="hljs-string">&quot;Authorization&quot;</span>, <span class="hljs-string">&quot;Bearer &quot;</span> + user.<span class="hljs-property">access_token</span>);</span></span><br><span class="language-javascript"><span class="language-xml">          xhr.<span class="hljs-title function_">send</span>();</span></span><br><span class="language-javascript"><span class="language-xml">      &#125;);</span></span><br><span class="language-javascript"><span class="language-xml">    &#125;,</span></span><br><span class="language-javascript"><span class="language-xml">    <span class="hljs-title function_">logout</span>(<span class="hljs-params"></span>) &#123;</span></span><br><span class="language-javascript"><span class="language-xml">      <span class="hljs-title function_">oidc</span>().<span class="hljs-title function_">signoutRedirect</span>();</span></span><br><span class="language-javascript"><span class="language-xml">    &#125;</span></span><br><span class="language-javascript"><span class="language-xml">  &#125;,</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-title function_">mounted</span>(<span class="hljs-params"></span>) &#123;</span></span><br><span class="language-javascript"><span class="language-xml">      <span class="hljs-keyword">var</span> that=<span class="hljs-variable language_">this</span>;</span></span><br><span class="language-javascript"><span class="language-xml">      <span class="hljs-title function_">oidc</span>().<span class="hljs-title function_">getUser</span>().<span class="hljs-title function_">then</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">user</span>) &#123;</span></span><br><span class="language-javascript"><span class="language-xml">          <span class="hljs-keyword">if</span> (user) &#123;</span></span><br><span class="language-javascript"><span class="language-xml">              that.<span class="hljs-property">res</span> = (<span class="hljs-string">&quot;User logged in&quot;</span>, user.<span class="hljs-property">profile</span>);</span></span><br><span class="language-javascript"><span class="language-xml">          &#125; <span class="hljs-keyword">else</span> &#123;</span></span><br><span class="language-javascript"><span class="language-xml">              that.<span class="hljs-property">res</span> = (<span class="hljs-string">&quot;User not logged in&quot;</span>);</span></span><br><span class="language-javascript"><span class="language-xml">          &#125;</span></span><br><span class="language-javascript"><span class="language-xml">      &#125;);</span></span><br><span class="language-javascript"><span class="language-xml">  &#125;</span></span><br><span class="language-javascript"><span class="language-xml">&#125;;</span></span><br><span class="language-javascript"><span class="language-xml"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br><br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">style</span> <span class="hljs-attr">scoped</span>&gt;</span></span><br><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span></span><br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>调整路由：</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> &#123; createRouter, createWebHashHistory &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vue-router&#x27;</span><br><span class="hljs-keyword">import</span> <span class="hljs-title class_">CallBack</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/CallBack&#x27;</span><br><span class="hljs-keyword">import</span> <span class="hljs-title class_">MyHome</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/MyHome&#x27;</span><br><br><span class="hljs-keyword">const</span> routes = [<br>    &#123;<br>        <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/CallBack&#x27;</span>,<br>        <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;CallBack&#x27;</span>,<br>        <span class="hljs-attr">component</span>: <span class="hljs-title class_">CallBack</span><br>    &#125;,<br>    &#123;<br>        <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/MyHome&#x27;</span>,<br>        <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;MyHome&#x27;</span>,<br>        <span class="hljs-attr">component</span>: <span class="hljs-title class_">MyHome</span><br>    &#125;<br>]<br><br><span class="hljs-keyword">const</span> router = <span class="hljs-title function_">createRouter</span>(&#123;<br>    <span class="hljs-attr">history</span>:<span class="hljs-title function_">createWebHashHistory</span>(),<span class="hljs-comment">//createWebHistory</span><br>    routes,<br>&#125;)<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> router;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>然后WebApi1服务器开启允许跨域访问<br>Program调整如下：</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-comment">//JS-allow Ajax calls to be made from http://localhost:5003 to https://localhost:5002.</span><br>services.AddCors(options =&gt;<br>&#123;<br>    <span class="hljs-comment">//this defines a CORS policy called &quot;default&quot;</span><br>    options.AddPolicy(<span class="hljs-string">&quot;default&quot;</span>, policy =&gt;<br>    &#123;<br>        policy.WithOrigins(<span class="hljs-string">&quot;http://localhost:5003&quot;</span>)<br>            .AllowAnyHeader()<br>            .AllowAnyMethod();<br>    &#125;);<br>&#125;);<br><br>......<span class="hljs-comment">//省略代码</span><br><br><span class="hljs-comment">//JS-Add the CORS middleware to the pipeline in Configure:</span><br>app.UseCors(<span class="hljs-string">&quot;default&quot;</span>);<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>完成以上启动后端的IdentityServer4服务器和API资源服务器（即启动5001和5002端口），然后再启动vue项目（即5003端口），访问 <code>http://localhost:5003/</code> ，然后点击登录，就跳转到5001的登录页面了，用户名密码填alice或bob，正常登录后会访问MyHome页面，可以得到用户信息，然后点击调用API按钮可以得到5002端口得到的资源数据信息</p>
+<p><img src="/../img/StudyVueIdentityServer4/img5.jpg" srcset="/img/loading.gif" lazyload alt="登录成功" title="登录成功"></p>
+<h1 id="5-自定义登录页面"><a href="#5-自定义登录页面" class="headerlink" title="5.自定义登录页面"></a>5.自定义登录页面</h1><h2 id="5-1-新建登录页面"><a href="#5-1-新建登录页面" class="headerlink" title="5.1.新建登录页面"></a>5.1.新建登录页面</h2><p>新建一个loginView.vue的页面，文件名可能有要求，直接命名Login.vue可能会报错，按照当前的要求换一个来命名即可，或者改一下命名要求的地址，这个可以参考网上其他教程</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><code class="hljs js">&lt;template&gt;<br>  &lt;div&gt;<br>      &lt;form&gt;<br>          &lt;div&gt;<br>              &lt;label&gt;用户名：&lt;/label&gt;<br>              &lt;input type=&quot;text&quot; placeholder=&quot;请输入用户名&quot; v-model=&quot;username&quot;&gt;<br>          &lt;/div&gt;<br>          &lt;div&gt;<br>              &lt;label&gt;密码：&lt;/label&gt;<br>              &lt;input type=&quot;password&quot; placeholder=&quot;请输入密码&quot; v-model=&quot;password&quot;&gt;<br>          &lt;/div&gt;<br>          &lt;div&gt;<br>            &lt;label&gt;记住我：&lt;/label&gt;<br>            &lt;input type=&quot;checkbox&quot; v-model=&quot;isRemember&quot;&gt;<br>          &lt;/div&gt;<br>      &lt;/form&gt;<br>      &lt;div&gt;<br>          &lt;button @click=&quot;login()&quot;&gt;登录&lt;/button&gt;<br>      &lt;/div&gt;<br>  &lt;/div&gt;<br>&lt;/template&gt;<br>  <br>&lt;script&gt;<br> import &#123;request&#125; from &quot;@/request/request&quot;<br><br> export default &#123;<br>  name: &#x27;loginView&#x27;,<br>  data() &#123;<br>      return &#123;<br>        username: &quot;&quot;,<br>        password: &quot;&quot;,<br>        isRemember: false,<br>      &#125;;<br>  &#125;,<br>  methods:&#123;<br>    login()&#123;<br><br>      //截取地址参数，构造ReturnUrl<br>      let index = this.$route.query.ReturnUrl.indexOf(&quot;?&quot;);<br>      let host = this.$route.query.ReturnUrl.substring(0, index + 1);<br>      host = host.substring(host.indexOf(&quot;/connect&quot;));<br>      let params = this.$route.query.ReturnUrl.substring(index + 1).split(&quot;&amp;&quot;);<br><br>      let ReturnUrl =<br>        host +<br>        params<br>          .map(x =&gt; &#123; return x; &#125;)<br>          .join(&quot;&amp;&quot;);<br><br>      var data = &#123;<br>        Username: this.username,<br>        Password: this.password,<br>        RememberLogin: this.isRemember,<br>        ReturnUrl: ReturnUrl,<br>      &#125;;<br><br>      request(&#123;<br>        headers: &#123; &#x27;content-type&#x27;: &#x27;application/x-www-form-urlencoded&#x27; &#125;,//表单提交<br>        method: &#x27;POST&#x27;,<br>        url: &#x27;/Account/LoginApi&#x27;,<br>        data: data<br>      &#125;).then(data=&gt;&#123;<br>        if (!data) &#123;<br>          this.$router.push(&#123; path: &quot;/404&quot; &#125;);<br>        &#125; else &#123;<br>          window.location = &quot;/api&quot; + data;<br>        &#125;<br>      &#125;).catch(error=&gt;&#123;<br>        console.log(error)<br>      &#125;)<br>    &#125;,<br>  &#125;<br>&#125;<br>&lt;/script&gt;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>再建一个404页面：_404View.vue</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs js">&lt;template&gt;<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>404<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span><br><span class="language-xml">        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>找不到页面！<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>&lt;/template&gt;<br><br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span></span><br><span class="language-xml"></span><br><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>绑定路由</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Login</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/loginView&#x27;</span><br><span class="hljs-keyword">import</span> _404View <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/_404View&#x27;</span><br><br>......<span class="hljs-comment">//省略代码</span><br><br>  &#123;<br>      <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/Login&#x27;</span>,<br>      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Login&#x27;</span>,<br>      <span class="hljs-attr">component</span>: <span class="hljs-title class_">Login</span><br>  &#125;,<br>  &#123;<br>      <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/404&#x27;</span>,<br>      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;404&#x27;</span>,<br>      <span class="hljs-attr">component</span>: _404View<br>  &#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>后端IdentityServer服务器配置，Startup调整，配置登录页面跳转地址</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs C#">services.AddIdentityServer(options =&gt;<br>&#123;<br>    options.UserInteraction = <span class="hljs-keyword">new</span> IdentityServer4.Configuration.UserInteractionOptions<br>    &#123;<br>        LoginUrl = <span class="hljs-string">&quot;http://localhost:5003/#/Login&quot;</span>,<br><br>    &#125;;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>后端增加登录提交接口，参照AccountController的Login Post方法，复制一个改名为LoginApi，核心是把原来 <code>return Redirect</code> 的地方改为了 <code>return Content</code> ，然后我们单独在前端做跳转即可</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br><span class="hljs-comment"><span class="hljs-doctag">///</span> 复制Login方法，改为提供给Vue前端使用</span><br><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name=&quot;model&quot;&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span><br><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name=&quot;button&quot;&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span><br><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;returns&gt;</span><span class="hljs-doctag">&lt;/returns&gt;</span></span><br><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;exception cref=&quot;Exception&quot;&gt;</span><span class="hljs-doctag">&lt;/exception&gt;</span></span><br>[<span class="hljs-meta">HttpPost</span>]<br><span class="hljs-comment">//[ValidateAntiForgeryToken]</span><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> Task&lt;IActionResult&gt; <span class="hljs-title">LoginApi</span>(<span class="hljs-params">LoginInputModel model</span>)</span><br>&#123;<br>    <span class="hljs-comment">// check if we are in the context of an authorization request</span><br>    <span class="hljs-keyword">var</span> context = <span class="hljs-keyword">await</span> _interaction.GetAuthorizationContextAsync(model.ReturnUrl);<br><br>    <span class="hljs-keyword">if</span> (ModelState.IsValid)<br>    &#123;<br>        <span class="hljs-comment">// validate username/password against in-memory store</span><br>        <span class="hljs-keyword">if</span> (_users.ValidateCredentials(model.Username, model.Password))<br>        &#123;<br>            <span class="hljs-keyword">var</span> user = _users.FindByUsername(model.Username);<br>            <span class="hljs-keyword">await</span> _events.RaiseAsync(<span class="hljs-keyword">new</span> UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username, clientId: context?.Client.ClientId));<br><br>            <span class="hljs-comment">// only set explicit expiration here if user chooses &quot;remember me&quot;. </span><br>            <span class="hljs-comment">// otherwise we rely upon expiration configured in cookie middleware.</span><br>            AuthenticationProperties props = <span class="hljs-literal">null</span>;<br>            <span class="hljs-keyword">if</span> (AccountOptions.AllowRememberLogin &amp;&amp; model.RememberLogin)<br>            &#123;<br>                props = <span class="hljs-keyword">new</span> AuthenticationProperties<br>                &#123;<br>                    IsPersistent = <span class="hljs-literal">true</span>,<br>                    ExpiresUtc = DateTimeOffset.UtcNow.Add(AccountOptions.RememberMeLoginDuration)<br>                &#125;;<br>            &#125;;<br><br>            <span class="hljs-comment">// issue authentication cookie with subject ID and username</span><br>            <span class="hljs-keyword">var</span> isuser = <span class="hljs-keyword">new</span> IdentityServerUser(user.SubjectId)<br>            &#123;<br>                DisplayName = user.Username<br>            &#125;;<br><br>            <span class="hljs-keyword">await</span> HttpContext.SignInAsync(isuser, props);<br><br>            <span class="hljs-keyword">if</span> (context != <span class="hljs-literal">null</span>)<br>            &#123;<br>                <span class="hljs-keyword">if</span> (context.IsNativeClient())<br>                &#123;<br>                    <span class="hljs-comment">// The client is native, so this change in how to</span><br>                    <span class="hljs-comment">// return the response is for better UX for the end user.</span><br>                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.LoadingPage(<span class="hljs-string">&quot;Redirect&quot;</span>, model.ReturnUrl);<br>                &#125;<br><br>                <span class="hljs-comment">// we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null</span><br>                <span class="hljs-comment">//return Redirect(model.ReturnUrl);</span><br>                <span class="hljs-keyword">return</span> Content(model.ReturnUrl);<br>            &#125;<br><br>            <span class="hljs-comment">// request for a local page</span><br>            <span class="hljs-keyword">if</span> (Url.IsLocalUrl(model.ReturnUrl))<br>            &#123;<br>                <span class="hljs-comment">//return Redirect(model.ReturnUrl);</span><br>                <span class="hljs-keyword">return</span> Content(model.ReturnUrl);<br>            &#125;<br>            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">string</span>.IsNullOrEmpty(model.ReturnUrl))<br>            &#123;<br>                <span class="hljs-comment">//return Redirect(&quot;~/&quot;);</span><br>                <span class="hljs-keyword">return</span> Content(<span class="hljs-string">&quot;&quot;</span>);<br>            &#125;<br>            <span class="hljs-keyword">else</span><br>            &#123;<br>                <span class="hljs-comment">// user might have clicked on a malicious link - should be logged</span><br>                <span class="hljs-comment">//throw new Exception(&quot;invalid return URL&quot;);</span><br>                <span class="hljs-keyword">return</span> Content(<span class="hljs-string">&quot;&quot;</span>);<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-keyword">await</span> _events.RaiseAsync(<span class="hljs-keyword">new</span> UserLoginFailureEvent(model.Username, <span class="hljs-string">&quot;invalid credentials&quot;</span>, clientId: context?.Client.ClientId));<br>        ModelState.AddModelError(<span class="hljs-built_in">string</span>.Empty, AccountOptions.InvalidCredentialsErrorMessage);<br>    &#125;<br><br>    <span class="hljs-comment">// something went wrong, show form with error</span><br>    <span class="hljs-comment">//var vm = await BuildLoginViewModelAsync(model);</span><br>    <span class="hljs-comment">//return View(vm);</span><br>    <span class="hljs-keyword">return</span> Content(<span class="hljs-string">&quot;&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>完成以上，启动前端和后端（即5001，5002，5003端口），点击登录按钮，就会跳转到登录页面，用户名密码填alice或bob，就可以正常登录并跳转到MyHome页面。</p>
+<p><img src="/../img/StudyVueIdentityServer4/img4.jpg" srcset="/img/loading.gif" lazyload alt="自定义登录" title="自定义登录"></p>
+<h1 id="5-自定义登出跳转首页"><a href="#5-自定义登出跳转首页" class="headerlink" title="5.自定义登出跳转首页"></a>5.自定义登出跳转首页</h1><p>和登录的逻辑类似，新建一个logoutView.vue，就负责访问后端进行登出操作然后跳转指定页面</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs js">&lt;template&gt;<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span></span><br><span class="language-xml">        </span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>&lt;/template&gt;<br>    <br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">import</span> &#123;request&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@/request/request&quot;</span></span></span><br><span class="language-javascript"><span class="language-xml"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span>&#123;</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;logoutView&#x27;</span>,</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-title function_">mounted</span>(<span class="hljs-params"></span>) &#123;</span></span><br><span class="language-javascript"><span class="language-xml">    <span class="hljs-title function_">request</span>(&#123;</span></span><br><span class="language-javascript"><span class="language-xml">        <span class="hljs-attr">headers</span>: &#123; <span class="hljs-string">&#x27;content-type&#x27;</span>: <span class="hljs-string">&#x27;application/x-www-form-urlencoded&#x27;</span> &#125;,</span></span><br><span class="language-javascript"><span class="language-xml">        <span class="hljs-attr">method</span>: <span class="hljs-string">&#x27;POST&#x27;</span>,</span></span><br><span class="language-javascript"><span class="language-xml">        <span class="hljs-attr">url</span>: <span class="hljs-string">&#x27;/Account/LogoutApi&#x27;</span>,</span></span><br><span class="language-javascript"><span class="language-xml">        <span class="hljs-attr">data</span>: <span class="hljs-literal">null</span></span></span><br><span class="language-javascript"><span class="language-xml">    &#125;).<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">data</span>=&gt;</span>&#123;</span></span><br><span class="language-javascript"><span class="language-xml">        <span class="hljs-keyword">if</span> (!data) &#123;</span></span><br><span class="language-javascript"><span class="language-xml">            <span class="hljs-variable language_">this</span>.<span class="hljs-property">$router</span>.<span class="hljs-title function_">push</span>(&#123; <span class="hljs-attr">path</span>: <span class="hljs-string">&quot;/404&quot;</span> &#125;);</span></span><br><span class="language-javascript"><span class="language-xml">        &#125; <span class="hljs-keyword">else</span> &#123;</span></span><br><span class="language-javascript"><span class="language-xml">            <span class="hljs-variable language_">this</span>.<span class="hljs-property">$router</span>.<span class="hljs-title function_">push</span>(&#123; <span class="hljs-attr">path</span>: <span class="hljs-string">&quot;/&quot;</span> &#125;);<span class="hljs-comment">//登出后要跳转的地址</span></span></span><br><span class="language-javascript"><span class="language-xml">        &#125;</span></span><br><span class="language-javascript"><span class="language-xml">    &#125;).<span class="hljs-title function_">catch</span>(<span class="hljs-function"><span class="hljs-params">error</span>=&gt;</span>&#123;</span></span><br><span class="language-javascript"><span class="language-xml">        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(error)</span></span><br><span class="language-javascript"><span class="language-xml">    &#125;)</span></span><br><span class="language-javascript"><span class="language-xml">  &#125;</span></span><br><span class="language-javascript"><span class="language-xml">&#125;</span></span><br><span class="language-javascript"><span class="language-xml"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>绑定路由</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Logout</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/logoutView&#x27;</span><br><br>......<span class="hljs-comment">//省略代码</span><br><br>  &#123;<br>    <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/Logout&#x27;</span>,<br>    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Logout&#x27;</span>,<br>    <span class="hljs-attr">component</span>: <span class="hljs-title class_">Logout</span><br>  &#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>后端IdentityServer服务器配置，Startup调整，配置登出页面跳转地址</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs C#">services.AddIdentityServer(options =&gt;<br>&#123;<br>    options.UserInteraction = <span class="hljs-keyword">new</span> IdentityServer4.Configuration.UserInteractionOptions<br>    &#123;<br>        LoginUrl = <span class="hljs-string">&quot;http://localhost:5003/#/Login&quot;</span>,<br>        LogoutUrl = <span class="hljs-string">&quot;http://localhost:5003/#/Logout&quot;</span>,<br>    &#125;;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>后端AccountController增加登出接口</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs C#">[<span class="hljs-meta">HttpPost</span>]<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> Task&lt;IActionResult&gt; <span class="hljs-title">LogoutApi</span>()</span><br>&#123;<br>    <span class="hljs-keyword">if</span> (User?.Identity.IsAuthenticated == <span class="hljs-literal">true</span>)<br>    &#123;<br>        <span class="hljs-comment">// delete local authentication cookie</span><br>        <span class="hljs-keyword">await</span> HttpContext.SignOutAsync();<br><br>        <span class="hljs-comment">// raise the logout event</span><br>        <span class="hljs-keyword">await</span> _events.RaiseAsync(<span class="hljs-keyword">new</span> UserLogoutSuccessEvent(User.GetSubjectId(), User.GetDisplayName()));<br><br>        <span class="hljs-keyword">return</span> Content(<span class="hljs-string">&quot;OK&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">return</span> Content(<span class="hljs-string">&quot;&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>完成以上，启动前端和后端（即5001，5002，5003端口），点击登录按钮，就会跳转到登录页面，用户名密码填alice或bob，登录后点击退出登录，会直接跳转会默认首页，再次点击登录需要再次填写用户名和密码。</p>
+<p><img src="/../img/StudyVueIdentityServer4/img2.jpg" srcset="/img/loading.gif" lazyload alt="前端项目" title="前端项目"></p>
+<br>
+
+<h1 id="demo链接"><a href="#demo链接" class="headerlink" title="demo链接"></a>demo链接</h1><p>Github代码-StudyVueIdentityServer4 <a target="_blank" rel="noopener" href="https://github.com/YuMan-LJP/demo">https://github.com/YuMan-LJP/demo</a></p>
+<br>
+
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>IdentityServer4学习文档 <a target="_blank" rel="noopener" href="https://identityserver4.readthedocs.io/en/latest/quickstarts/4_javascript_client.html">https://identityserver4.readthedocs.io/en/latest/quickstarts/4_javascript_client.html</a><br>Vue中文学习文档 <a target="_blank" rel="noopener" href="https://cn.vuejs.org/guide/quick-start.html">https://cn.vuejs.org/guide/quick-start.html</a><br>Vue CLI使用文档 <a target="_blank" rel="noopener" href="https://cli.vuejs.org/zh/guide/">https://cli.vuejs.org/zh/guide/</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ASP-NET%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" class="category-chain-item">ASP.NET相关技术学习总结</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/IdentityServer4/" class="print-no-link">#IdentityServer4</a>
+      
+        <a href="/tags/vue/" class="print-no-link">#vue</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【3】学习IdentityServer4，搭建授权认证系统</div>
+      <div>http://example.com/2024/01/10/StudyVueIdentityServer4/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>YuMan-LJP</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/01/20/SummaryExcel/" title="《1》经验总结-Excel导入导出">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">《1》经验总结-Excel导入导出</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/12/29/StudyAspNetIdentity/" title="【2】学习ASP.NET Identity，搭建一套简易权限控制系统">
+                        <span class="hidden-mobile">【2】学习ASP.NET Identity，搭建一套简易权限控制系统</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

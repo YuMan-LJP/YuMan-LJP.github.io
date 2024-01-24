@@ -1,0 +1,796 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="YuMan-LJP">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="汇总平时经常使用的公共帮助类，总结关于Excel的导入导出相关操作Github代码-MyHeplerProject https:&#x2F;&#x2F;github.com&#x2F;YuMan-LJP&#x2F;demo             Excel导入核心代码展示NuGet包引入NPOI（注意版本兼容），3个核心方法如下：（1）ReadExcelToDataTable，识别文件后缀，循环读取sheet">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《1》经验总结-Excel导入导出">
+<meta property="og:url" content="http://example.com/2024/01/20/SummaryExcel/index.html">
+<meta property="og:site_name" content="YuMan-LJP&#39;s Blog">
+<meta property="og:description" content="汇总平时经常使用的公共帮助类，总结关于Excel的导入导出相关操作Github代码-MyHeplerProject https:&#x2F;&#x2F;github.com&#x2F;YuMan-LJP&#x2F;demo             Excel导入核心代码展示NuGet包引入NPOI（注意版本兼容），3个核心方法如下：（1）ReadExcelToDataTable，识别文件后缀，循环读取sheet">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-01-20T14:53:49.000Z">
+<meta property="article:modified_time" content="2024-01-24T01:52:16.002Z">
+<meta property="article:author" content="YuMan-LJP">
+<meta property="article:tag" content="Excel">
+<meta property="article:tag" content="NPOI">
+<meta property="article:tag" content="SXSSFWorkbook">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>《1》经验总结-Excel导入导出 - YuMan-LJP&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>YuMan-LJP&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="《1》经验总结-Excel导入导出"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-01-20 14:53" pubdate>
+          2024年1月20日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          40 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">《1》经验总结-Excel导入导出</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年1月24日 凌晨
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <div class="note note-success">
+            <p>汇总平时经常使用的公共帮助类，总结关于Excel的导入导出相关操作</p><p>Github代码-MyHeplerProject <a target="_blank" rel="noopener" href="https://github.com/YuMan-LJP/demo">https://github.com/YuMan-LJP/demo</a></p>
+          </div>
+
+<h1 id="Excel导入"><a href="#Excel导入" class="headerlink" title="Excel导入"></a>Excel导入</h1><h2 id="核心代码展示"><a href="#核心代码展示" class="headerlink" title="核心代码展示"></a>核心代码展示</h2><p>NuGet包引入NPOI（注意版本兼容），3个核心方法如下：<br>（1）ReadExcelToDataTable，识别文件后缀，循环读取sheet页</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> DataTable <span class="hljs-title">ReadExcelToDataTable</span>(<span class="hljs-params">Stream stream, <span class="hljs-built_in">string</span> fileExtension, <span class="hljs-built_in">int</span> sheetIndex = <span class="hljs-number">0</span>, <span class="hljs-built_in">int</span> headerRowNum = <span class="hljs-number">0</span>, <span class="hljs-built_in">bool</span> isReadHiddenSheet = <span class="hljs-literal">false</span>, <span class="hljs-built_in">bool</span> isReadNumWithFormat = <span class="hljs-literal">false</span></span>)</span><br>&#123;<br>    <span class="hljs-function">DataTable <span class="hljs-title">getTable</span>()</span><br>    &#123;<br><br>        IWorkbook workbook;<br>        <span class="hljs-keyword">switch</span> (fileExtension.ToStringEx().ToLower())<br>        &#123;<br>            <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;.xls&quot;</span>:<br>                workbook = <span class="hljs-keyword">new</span> HSSFWorkbook(stream);<br>                <span class="hljs-keyword">break</span>;<br>            <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;.xlsx&quot;</span>:<br>                workbook = <span class="hljs-keyword">new</span> XSSFWorkbook(stream);<br>                <span class="hljs-keyword">break</span>;<br>            <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;.xlsm&quot;</span>:<br>                workbook = <span class="hljs-keyword">new</span> XSSFWorkbook(stream);<br>                <span class="hljs-keyword">break</span>;<br>            <span class="hljs-literal">default</span>:<br>                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception(<span class="hljs-built_in">string</span>.Format(<span class="hljs-string">&quot;不支持读取&#123;0&#125;格式！&quot;</span>, fileExtension));<br>        &#125;<br><br>        <span class="hljs-meta">#<span class="hljs-keyword">region</span> 取有效的页序号</span><br>        <span class="hljs-keyword">var</span> visibleSheetIndexs = <span class="hljs-keyword">new</span> List&lt;<span class="hljs-built_in">int</span>&gt;();<span class="hljs-comment">//当前可见的sheet页序号</span><br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; workbook.NumberOfSheets; i++)<br>        &#123;<br>            <span class="hljs-keyword">if</span> (workbook.IsSheetHidden(i) &amp;&amp; !isReadHiddenSheet)<br>            &#123;<br>                <span class="hljs-keyword">continue</span>;<span class="hljs-comment">//当前sheet是隐藏的，但是不读隐藏的，跳过当前sheet</span><br>            &#125;<br>            visibleSheetIndexs.Add(i);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (visibleSheetIndexs.Count &lt; sheetIndex + <span class="hljs-number">1</span>)<br>        &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception(<span class="hljs-string">$&quot;读取的Excel没有第<span class="hljs-subst">&#123;sheetIndex + <span class="hljs-number">1</span>&#125;</span>页&quot;</span>);<br>        &#125;<br>        sheetIndex = visibleSheetIndexs[sheetIndex];<span class="hljs-comment">//如果Excel隐藏了一页，可见页只有一页，sheetIndex传0，实际读取的是Excel的sheetIndex=1页</span><br>        <span class="hljs-meta">#<span class="hljs-keyword">endregion</span></span><br><br>        ISheet sheet = workbook.GetSheetAt(sheetIndex);<br><br>        <span class="hljs-keyword">return</span> ReadSheetToDataTable(sheet, headerRowNum, isReadNumWithFormat);<br><br>    &#125;<br>    DataTable table = getTable();<br>    GC.Collect();<br>    <span class="hljs-keyword">return</span> table;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>（2）ReadSheetToDataTable，单个Sheet页中循环行，一行一行读取内容</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> DataTable <span class="hljs-title">ReadSheetToDataTable</span>(<span class="hljs-params">ISheet sheet, <span class="hljs-built_in">int</span> headerRowNum, <span class="hljs-built_in">bool</span> isReadNumWithFormat = <span class="hljs-literal">false</span></span>)</span><br>&#123;<br>    DataTable table = <span class="hljs-keyword">new</span> DataTable(sheet.SheetName);<br>    Dictionary&lt;<span class="hljs-built_in">int</span>, <span class="hljs-built_in">int</span>&gt; columnCellIndexMapperDic = <span class="hljs-keyword">new</span> Dictionary&lt;<span class="hljs-built_in">int</span>, <span class="hljs-built_in">int</span>&gt;();<br>    IEnumerator rows = sheet.GetRowEnumerator();<br>    <span class="hljs-keyword">while</span> (rows.MoveNext())<br>    &#123;<br>        IRow row = (IRow)rows.Current;<br><br>        <span class="hljs-meta">#<span class="hljs-keyword">region</span> 创建列</span><br>        <span class="hljs-keyword">if</span> (headerRowNum &lt; <span class="hljs-number">0</span> &amp;&amp; table.Columns.Count == <span class="hljs-number">0</span>) <span class="hljs-comment">//不使用Excel数据作为表头</span><br>        &#123;<br>            <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> j = <span class="hljs-number">0</span>; j &lt; row.LastCellNum; j++)<br>            &#123;<br>                table.Columns.Add(ToLetters(j), <span class="hljs-keyword">typeof</span>(<span class="hljs-built_in">string</span>));<br>                columnCellIndexMapperDic.Add(table.Columns.Count - <span class="hljs-number">1</span>, j);<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (row.RowNum &lt; headerRowNum)<span class="hljs-comment">//当前行位置小于指定作为表头的行位置，直接跳过忽略</span><br>        &#123;<br>            <span class="hljs-keyword">continue</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (row.RowNum == headerRowNum)<span class="hljs-comment">//当前行位置等于指定作为表头的行位置，创建DataTable列</span><br>        &#123;<br>            <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> j = <span class="hljs-number">0</span>; j &lt; row.LastCellNum; j++)<br>            &#123;<br>                ICell cell = row.GetCell(j);<br>                <span class="hljs-keyword">if</span> (cell != <span class="hljs-literal">null</span> &amp;&amp; !<span class="hljs-built_in">string</span>.IsNullOrWhiteSpace(cell.ToString()) &amp;&amp; cell.ToString().Trim() != <span class="hljs-string">&quot;\u001d&quot;</span>)<br>                &#123;<br>                    table.Columns.Add(cell.ToString().Trim(), <span class="hljs-keyword">typeof</span>(<span class="hljs-built_in">string</span>));<br>                    columnCellIndexMapperDic.Add(table.Columns.Count - <span class="hljs-number">1</span>, j);<br>                &#125;<br>            &#125;<br>            <span class="hljs-keyword">continue</span>;<br>        &#125;<br>        <span class="hljs-meta">#<span class="hljs-keyword">endregion</span></span><br><br>        <span class="hljs-meta">#<span class="hljs-keyword">region</span> 新增行</span><br>        DataRow dr = table.NewRow();<br>        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> j = <span class="hljs-number">0</span>; j &lt; table.Columns.Count; j++)<br>        &#123;<br>            <span class="hljs-keyword">var</span> cellIndex = columnCellIndexMapperDic[j];<br>            ICell cell = row.GetCell(cellIndex);<br>            <span class="hljs-keyword">if</span> (cell == <span class="hljs-literal">null</span>)<br>            &#123;<br>                dr[j] = <span class="hljs-literal">null</span>;<br>            &#125;<br>            <span class="hljs-keyword">else</span><br>            &#123;<br>                dr[j] = GetCellValue(cell, isReadNumWithFormat);<br>            &#125;<br>        &#125;<br>        table.Rows.Add(dr);<br>        <span class="hljs-meta">#<span class="hljs-keyword">endregion</span></span><br>    &#125;<br>    <span class="hljs-keyword">return</span> table;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>（3）GetCellValue，每个单元格数据取值，判断特殊格式处理</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">string</span> <span class="hljs-title">GetCellValue</span>(<span class="hljs-params">ICell cell, <span class="hljs-built_in">bool</span> isReadNumWithFormat = <span class="hljs-literal">false</span></span>)</span><br>&#123;<br>    <span class="hljs-keyword">if</span> (cell == <span class="hljs-literal">null</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">string</span>.Empty;<br>    <span class="hljs-keyword">switch</span> (cell.CellType)<br>    &#123;<br>        <span class="hljs-keyword">case</span> CellType.Blank: <span class="hljs-comment">//空数据类型 这里类型注意一下，不同版本NPOI大小写可能不一样,有的版本是Blank（首字母大写)</span><br>            <span class="hljs-keyword">return</span> <span class="hljs-built_in">string</span>.Empty;<br>        <span class="hljs-keyword">case</span> CellType.Boolean: <span class="hljs-comment">//bool类型</span><br>            <span class="hljs-keyword">return</span> cell.BooleanCellValue.ToString();<br>        <span class="hljs-keyword">case</span> CellType.Error:<br>            <span class="hljs-keyword">return</span> cell.ErrorCellValue.ToString();<br>        <span class="hljs-keyword">case</span> CellType.Numeric: <span class="hljs-comment">//数字类型</span><br>            <span class="hljs-keyword">if</span> (DateUtil.IsCellDateFormatted(cell))<span class="hljs-comment">//日期类型</span><br>            &#123;<br>                <span class="hljs-built_in">string</span> formatString = cell.CellStyle.GetDataFormatString();<br>                <span class="hljs-built_in">short</span> dataFormat = cell.CellStyle.DataFormat;<br>                <span class="hljs-keyword">switch</span> (dataFormat)<br>                &#123;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-number">14</span>:<br>                    <span class="hljs-keyword">case</span> <span class="hljs-number">31</span>:<br>                    <span class="hljs-keyword">case</span> <span class="hljs-number">57</span>:<br>                    <span class="hljs-keyword">case</span> <span class="hljs-number">58</span>:<br>                        <span class="hljs-keyword">return</span> cell.DateCellValue.ToString();<br>                    <span class="hljs-comment">//case 177:</span><br>                    <span class="hljs-comment">//case 179:</span><br>                    <span class="hljs-comment">//    return cell.DateCellValue.ToString(&quot;yyyy年M月d日&quot;);</span><br>                    <span class="hljs-comment">//case 178:</span><br>                    <span class="hljs-comment">//    return cell.DateCellValue.ToString(&quot;yyyy年M月&quot;);</span><br>                    <span class="hljs-literal">default</span>:<br>                        <span class="hljs-keyword">var</span> dataTime = DateUtil.GetJavaDate(cell.NumericCellValue);<br>                        <span class="hljs-keyword">if</span> (formatString == <span class="hljs-string">&quot;m/d/yyyy\\ h:mm:ss&quot;</span>)<br>                        &#123;<br>                            <span class="hljs-comment">//注意Excel文件的m/d/yyyy\\ h:mm:ss格式要对应C#的M/d/yyyy\\ H:mm:ss，m和h的大小写在C#与Excel中的含义不一样</span><br>                            <span class="hljs-keyword">return</span> dataTime.ToString(<span class="hljs-string">&quot;M/d/yyyy\\ H:mm:ss&quot;</span>, System.Globalization.CultureInfo.InvariantCulture);<br>                        &#125;<br>                        <span class="hljs-comment">//if (formatString == &quot;m\\/d\\/yyyy&quot;)</span><br>                        <span class="hljs-comment">//&#123;</span><br>                        <span class="hljs-comment">//    return dataTime.ToString(&quot;M/d/yyyy&quot;);</span><br>                        <span class="hljs-comment">//&#125;</span><br>                        <span class="hljs-comment">//return dataTime.ToString(formatString);</span><br>                        formatString = formatString.Replace(<span class="hljs-string">&quot;m&quot;</span>, <span class="hljs-string">&quot;M&quot;</span>).Replace(<span class="hljs-string">&quot;;@&quot;</span>, <span class="hljs-string">&quot;&quot;</span>);<span class="hljs-comment">//C#的月份用M表示</span><br>                        <span class="hljs-keyword">return</span> dataTime.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture);<br>                &#125;<br>            &#125;<br>            <span class="hljs-keyword">if</span> (isReadNumWithFormat)<br>            &#123;<br>                <span class="hljs-built_in">string</span> formatString = cell.CellStyle.GetDataFormatString();<br>                <span class="hljs-built_in">short</span> dataFormat = cell.CellStyle.DataFormat;<br>                <span class="hljs-keyword">switch</span> (dataFormat)<br>                &#123;<br>                    <span class="hljs-literal">default</span>:<br>                        <span class="hljs-keyword">if</span> (formatString == <span class="hljs-string">&quot;\&quot;$\&quot;#,##0.00&quot;</span>)<br>                        &#123;<br>                            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> DataFormatter().FormatCellValue(cell);<br>                        &#125;<br>                        <span class="hljs-keyword">return</span> cell.NumericCellValue.ToString();<br>                &#125;<br>            &#125;<br>            <span class="hljs-keyword">return</span> cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);<span class="hljs-comment">//其它数字，注意忽略语言特性，越南文下会点变成逗号</span><br>        <span class="hljs-keyword">case</span> CellType.Unknown: <span class="hljs-comment">//无法识别类型</span><br>        <span class="hljs-literal">default</span>: <span class="hljs-comment">//默认类型</span><br>            <span class="hljs-keyword">return</span> cell.ToString();<span class="hljs-comment">//</span><br>        <span class="hljs-keyword">case</span> CellType.String: <span class="hljs-comment">//string 类型</span><br>            <span class="hljs-keyword">return</span> cell.StringCellValue;<br>        <span class="hljs-keyword">case</span> CellType.Formula: <span class="hljs-comment">//带公式类型</span><br>            <span class="hljs-keyword">try</span><br>            &#123;<br>                <span class="hljs-keyword">if</span> (cell.Sheet.Workbook <span class="hljs-keyword">is</span> HSSFWorkbook)<br>                &#123;<br>                    HSSFFormulaEvaluator e = <span class="hljs-keyword">new</span> HSSFFormulaEvaluator(cell.Sheet.Workbook);<br>                    e.EvaluateInCell(cell);<br>                &#125;<br>                <span class="hljs-keyword">else</span><br>                &#123;<br>                    XSSFFormulaEvaluator e = <span class="hljs-keyword">new</span> XSSFFormulaEvaluator(cell.Sheet.Workbook);<br>                    e.EvaluateInCell(cell);<br>                &#125;<br>            &#125;<br>            <span class="hljs-keyword">catch</span><br>            &#123;<br>                <span class="hljs-comment">//吞掉异常</span><br>            &#125;<br>            <span class="hljs-keyword">return</span> cell.ToString();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<h2 id="解析说明"><a href="#解析说明" class="headerlink" title="解析说明"></a>解析说明</h2><p>以上核心代码做各自拓展方法，demo中展示了3个方法，后续根据实际的业务需要可以再拓展相关参数或方法</p>
+<ul>
+<li>（1） <code>DataSet ImportExcel(Stream stream, string fileExtension, bool filterNotDataSheet = true, bool isReadHiddenSheet = false, bool isReadNumWithFormat = false)</code> </li>
+<li>（2） <code>DataTable ReadExcelToDataTable(Stream stream, string fileExtension, int sheetIndex = 0, int headerRowNum = 0, bool isReadHiddenSheet = false, bool isReadNumWithFormat = false)</code> </li>
+<li>（3） <code>DataTable ReadExcelToDataTableBySheetName(Stream stream, string fileExtension, string sheetName = &quot;&quot;, int headerRowNum = 0, bool isReadHiddenSheet = false)</code></li>
+</ul>
+<p>第（1）个方法读的结果是一个DataSet，即Excel中有多个sheet页时，调用该方法读取结果，DataSet中每个DataTable就是一个sheet页的数据。第（2）和第（3）个方法读取时返回的就是一个DataTable就是一个sheet页内容，默认读取第一个可见的sheet页内容。</p>
+<ul>
+<li>filterNotDataSheet：是否过滤没有数据的sheet页，默认过滤，传false时不过滤，即sheet页是空的时候会生成一个空的DataTable；</li>
+<li>isReadHiddenSheet：是否读取隐藏的sheet页，默认不读；</li>
+<li>isReadNumWithFormat： 是否按原本格式读取数字，即表示是否还原Excel中看到的显示格式，读取数据Excel中的原始值和表格中看到的显示值可能会不一样，特别是数字和时间类型的数据。此处特别针对价格格式做处理，如果Excel中的自定义格式是$#,##0.00时，会按这个格式来读取数据，避免读取的数据和Excel看到的不一样</li>
+<li>sheetName：Sheet页名称，为空或找不到时默认取第一个sheet（如果指定的sheetName隐藏了而且不读隐藏页时，也默认取第一个可见sheet）</li>
+<li>headerRowNum：表头行位置，小于0表示不使用Excel数据作为表头，默认会用A，B，C…字母作为表头。当处理一下表格的表头是动态的时候，可以不读取内容中的表头，读完之后自己动态的判断表头</li>
+</ul>
+<p>特别注意关于数字类型的单元格读取的处理，Excel文件的m&#x2F;d&#x2F;yyyy\ h:mm:ss格式要对应C#的M&#x2F;d&#x2F;yyyy\ H:mm:ss，m和h的大小写在C#与Excel中的含义不一样</p>
+<h2 id="调用方法"><a href="#调用方法" class="headerlink" title="调用方法"></a>调用方法</h2><p>需要读取多个sheet页时使用第（1）个方法，一般情况下使用第（2）个方法，特别情况下读取指定sheet页可以使用第（3）个方法</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">ExcelRead1</span>()</span><br>&#123;<br>    <span class="hljs-built_in">string</span> path = <span class="hljs-string">$&quot;<span class="hljs-subst">&#123;_hostEnvironment.ContentRootPath&#125;</span>\\Data\\TestFile\\Test1.xlsx&quot;</span>;<br>    <span class="hljs-built_in">string</span> fileEx = Path.GetExtension(path);<br><br>    <span class="hljs-keyword">using</span> FileStream fs = <span class="hljs-keyword">new</span> FileStream(path, FileMode.Open, FileAccess.Read);<br>    <span class="hljs-keyword">var</span> dt = ExcelHelper.ImportExcel(fs, fileEx);<br><br>    <span class="hljs-keyword">return</span> Json(JsonConvert.SerializeObject(dt));<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">ExcelRead2</span>()</span><br>&#123;<br>    <span class="hljs-built_in">string</span> path = <span class="hljs-string">$&quot;<span class="hljs-subst">&#123;_hostEnvironment.ContentRootPath&#125;</span>\\Data\\TestFile\\Test1.xlsx&quot;</span>;<br>    <span class="hljs-built_in">string</span> fileEx = Path.GetExtension(path);<br><br>    <span class="hljs-keyword">using</span> FileStream fs = <span class="hljs-keyword">new</span> FileStream(path, FileMode.Open, FileAccess.Read);<br>    <span class="hljs-keyword">var</span> dt = ExcelHelper.ReadExcelToDataTable(fs, fileEx);<br><br>    <span class="hljs-keyword">return</span> Json(JsonConvert.SerializeObject(dt));<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">ExcelRead3</span>()</span><br>&#123;<br>    <span class="hljs-built_in">string</span> path = <span class="hljs-string">$&quot;<span class="hljs-subst">&#123;_hostEnvironment.ContentRootPath&#125;</span>\\Data\\TestFile\\Test1.xlsx&quot;</span>;<br>    <span class="hljs-built_in">string</span> fileEx = Path.GetExtension(path);<br><br>    <span class="hljs-keyword">using</span> FileStream fs = <span class="hljs-keyword">new</span> FileStream(path, FileMode.Open, FileAccess.Read);<br>    <span class="hljs-keyword">var</span> dt = ExcelHelper.ReadExcelToDataTableBySheetName(fs, fileEx, <span class="hljs-string">&quot;sheet2&quot;</span>);<br><br>    <span class="hljs-keyword">return</span> Json(JsonConvert.SerializeObject(dt));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<br>
+
+<hr>
+<h1 id="Excel导出"><a href="#Excel导出" class="headerlink" title="Excel导出"></a>Excel导出</h1><h2 id="少量数据导出"><a href="#少量数据导出" class="headerlink" title="少量数据导出"></a>少量数据导出</h2><h3 id="核心代码展示-1"><a href="#核心代码展示-1" class="headerlink" title="核心代码展示"></a>核心代码展示</h3><details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">byte</span>[] <span class="hljs-title">ExportExcelEx</span>(<span class="hljs-params">List&lt;ExportExcelRequest&gt; requests, Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; customType</span>)</span><br>&#123;<br>    <span class="hljs-built_in">string</span> fileExtension = requests[<span class="hljs-number">0</span>].FileExtension;<br>    IWorkbook workbook;<br>    <span class="hljs-keyword">switch</span> (fileExtension.ToStringEx().ToLower())<br>    &#123;<br>        <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;.xls&quot;</span>:<br>            workbook = <span class="hljs-keyword">new</span> HSSFWorkbook();<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;.xlsx&quot;</span>:<br>            workbook = <span class="hljs-keyword">new</span> XSSFWorkbook();<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-literal">default</span>:<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception(<span class="hljs-built_in">string</span>.Format(<span class="hljs-string">&quot;不支持导出&#123;0&#125;格式！&quot;</span>, fileExtension));<br>    &#125;<br><br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; requests.Count; i++)<br>    &#123;<br>        <span class="hljs-keyword">var</span> request = requests[i];<br>        <span class="hljs-built_in">string</span> tableName = request.TableName;<br>        DataTable table = request.Table;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">string</span>.IsNullOrEmpty(tableName)) &#123; tableName = <span class="hljs-built_in">string</span>.IsNullOrEmpty(table.TableName) ? <span class="hljs-string">$&quot;Sheet<span class="hljs-subst">&#123;i + <span class="hljs-number">1</span>&#125;</span>&quot;</span> : table.TableName; &#125;<br><br><br>        Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; headers = request.Header;<br>        <span class="hljs-keyword">if</span> (headers == <span class="hljs-literal">null</span> || headers.Count == <span class="hljs-number">0</span>)<br>        &#123;<br>            headers = <span class="hljs-keyword">new</span> Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;();<br>            <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> j = <span class="hljs-number">0</span>; j &lt; table.Columns.Count; j++)<br>            &#123;<br>                headers.Add(table.Columns[j].ColumnName, table.Columns[j].ColumnName);<br>            &#125;<br>        &#125;<br>        ISheet sheet = workbook.CreateSheet(tableName);<br>        IRow rowHead = sheet.CreateRow(<span class="hljs-number">0</span>);<br>        ICellStyle dateStyle = workbook.CreateCellStyle();<br>        dateStyle.DataFormat = HSSFDataFormat.GetBuiltinFormat(<span class="hljs-string">&quot;@&quot;</span>);<br>        <span class="hljs-built_in">int</span> z = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">foreach</span> (<span class="hljs-built_in">string</span> title <span class="hljs-keyword">in</span> headers.Keys)<br>        &#123;<br>            <span class="hljs-built_in">string</span> text = headers[title];<br>            rowHead.CreateCell(z, CellType.String).SetCellValue(text);<br>            sheet.AutoSizeColumn(z);<br>            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> item <span class="hljs-keyword">in</span> customType)<br>            &#123;<br>                <span class="hljs-keyword">if</span> (table.Columns[i].ColumnName == item.Key &amp;&amp; item.Value == <span class="hljs-string">&quot;Text&quot;</span>)<br>                &#123;<br>                    sheet.SetDefaultColumnStyle(i, dateStyle);<br><br>                &#125;<br>            &#125;<br>            z++;<br>        &#125;<br><br><br>        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> j = <span class="hljs-number">0</span>; j &lt; table.Rows.Count; j++)<br>        &#123;<br>            DataRow row = table.Rows[j];<br>            IRow rowData = sheet.CreateRow(j + <span class="hljs-number">1</span>);<br>            <span class="hljs-built_in">int</span> k = <span class="hljs-number">0</span>;<br>            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> keyName <span class="hljs-keyword">in</span> headers)<br>            &#123;<br>                <span class="hljs-built_in">string</span> colName = keyName.Key;<br><br>                customType.TryGetValue(colName, <span class="hljs-keyword">out</span> <span class="hljs-built_in">string</span> type);<br>                <span class="hljs-keyword">if</span> (row[colName] == DBNull.Value || row[colName] == <span class="hljs-literal">null</span>)<br>                &#123;<br>                    <span class="hljs-keyword">if</span> (type != <span class="hljs-string">&quot;Numeric&quot;</span>)<br>                    &#123;<br>                        rowData.CreateCell(k, CellType.String).SetCellValue(<span class="hljs-string">&quot;&quot;</span>);<br>                    &#125;<br>                &#125;<br>                <span class="hljs-keyword">else</span><br>                &#123;<br>                    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">string</span>.IsNullOrEmpty(type))<br>                    &#123;<br>                        <span class="hljs-built_in">string</span> cellValue = row[colName].ToString();<br>                        <span class="hljs-keyword">switch</span> (type)<br>                        &#123;<br>                            <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;Numeric&quot;</span>:<br>                                &#123;<br>                                    <span class="hljs-built_in">double</span>.TryParse(cellValue, <span class="hljs-keyword">out</span> <span class="hljs-built_in">double</span> num);<br>                                    rowData.CreateCell(k, CellType.Numeric).SetCellValue(num);<br>                                    <span class="hljs-keyword">break</span>;<br>                                &#125;<br><br>                            <span class="hljs-literal">default</span>:<br>                                rowData.CreateCell(k, CellType.String).SetCellValue(cellValue);<br>                                <span class="hljs-keyword">break</span>;<br>                        &#125;<br>                    &#125;<br>                    <span class="hljs-keyword">else</span><br>                    &#123;<br>                        rowData.CreateCell(k, CellType.String).SetCellValue(row[colName].ToString());<br>                    &#125;<br>                &#125;<br>                k++;<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">using</span> (MemoryStream ms = <span class="hljs-keyword">new</span> MemoryStream())<br>    &#123;<br>        workbook.Write(ms);<br>        <span class="hljs-keyword">return</span> ms.ToArray();<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">//ExportExcelRequest对象的结构如下</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ExportExcelRequest</span><br>&#123;<br>    <span class="hljs-keyword">public</span> DataTable Table &#123; <span class="hljs-keyword">set</span>; <span class="hljs-keyword">get</span>; &#125;<br><br>    <span class="hljs-keyword">public</span> Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; Header &#123; <span class="hljs-keyword">set</span>; <span class="hljs-keyword">get</span>; &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> TableName &#123; <span class="hljs-keyword">set</span>; <span class="hljs-keyword">get</span>; &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> FileExtension &#123; <span class="hljs-keyword">set</span>; <span class="hljs-keyword">get</span>; &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<h3 id="解析说明-1"><a href="#解析说明-1" class="headerlink" title="解析说明"></a>解析说明</h3><p>导出比较重要的功能就是表头实现切换和特殊列的格式化</p>
+<ul>
+<li>表头显示值切换：ExportExcelEx方法中requests参数的Header属性可以传入一个字典，字典就是列名-显示名的一个键值对，在实际导出时，导出的Excel文件的表头可以替换成自己想要显示的列名，而不是只能显示原始的那个Dto对象的属性名从而也能进一步实现多语言的表头</li>
+<li>特殊列的格式化：ExportExcelEx方法中customType参数，可以指定列，并指定这列的格式格式，目前仅支持数字格式，如果以后需要可以再继续追加</li>
+</ul>
+<h3 id="调用方法-1"><a href="#调用方法-1" class="headerlink" title="调用方法"></a>调用方法</h3><details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs C#">List&lt;ExportExcelRequest&gt; requests = <span class="hljs-keyword">new</span> List&lt;ExportExcelRequest&gt;<br>&#123;<br>    <span class="hljs-keyword">new</span> ExportExcelRequest &#123;<br>        Table = dt,<span class="hljs-comment">//要导出的数据DataTable</span><br>        TableName = <span class="hljs-string">&quot;User1&quot;</span>,<span class="hljs-comment">//导出的sheet名字</span><br>        FileExtension = <span class="hljs-string">&quot;.xlsx&quot;</span>,<br>        Header = header<span class="hljs-comment">//表头显示字典</span><br>    &#125;,<br>    <span class="hljs-keyword">new</span> ExportExcelRequest &#123;<br>        Table = dt,<span class="hljs-comment">//要导出的数据DataTable</span><br>        TableName = <span class="hljs-string">&quot;User2&quot;</span>,<span class="hljs-comment">//导出的sheet名字</span><br>        FileExtension = <span class="hljs-string">&quot;.xlsx&quot;</span>,<br>        Header = header<span class="hljs-comment">//表头显示字典</span><br>    &#125;<br>&#125;;<br><br><span class="hljs-comment">//自定义列为数值列</span><br>Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; customType = <span class="hljs-keyword">new</span> Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;<br>&#123;<br>    &#123; <span class="hljs-string">&quot;Age&quot;</span>,<span class="hljs-string">&quot;Numeric&quot;</span> &#125;,<br>&#125;;<br><span class="hljs-keyword">var</span> data = ExcelHelper.ExportExcelEx(requests, customType);<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<h2 id="大量数据导出"><a href="#大量数据导出" class="headerlink" title="大量数据导出"></a>大量数据导出</h2><h3 id="核心代码展示-2"><a href="#核心代码展示-2" class="headerlink" title="核心代码展示"></a>核心代码展示</h3><p>封装一套SXSSFWorkbook的方法</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">AutoSplitExcelWriter</span> : <span class="hljs-title">IDisposable</span><br>&#123;<br>    <span class="hljs-meta">#<span class="hljs-keyword">region</span> class: SheetWriter</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SheetWriter</span><br>    &#123;<br>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-built_in">string</span> _sheetName;<br>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-built_in">int</span> _sheetMaxRow;<br>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> Dictionary&lt;<span class="hljs-built_in">int</span>, SXSSFWorkbook&gt; _workbookDict;<br>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-built_in">bool</span> _isIncludeHeader = <span class="hljs-literal">false</span>;<br>        <span class="hljs-keyword">private</span> <span class="hljs-built_in">int</span> _currentFileSplitIndex = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">private</span> IWorkbook _currentWorkbook = <span class="hljs-literal">null</span>;<br>        <span class="hljs-keyword">private</span> ISheet _currentSheet = <span class="hljs-literal">null</span>;<br>        <span class="hljs-keyword">private</span> <span class="hljs-built_in">int</span> _currentRowIndex = <span class="hljs-number">-1</span>;<br><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">SheetWriter</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> sheetName, <span class="hljs-built_in">int</span> sheetMaxRow, Dictionary&lt;<span class="hljs-built_in">int</span>, SXSSFWorkbook&gt; workbookDict, <span class="hljs-built_in">bool</span> isIncludeHeader</span>)</span><br>        &#123;<br>            _sheetName = sheetName;<br>            _sheetMaxRow = sheetMaxRow;<br>            _workbookDict = workbookDict;<br>            _isIncludeHeader = isIncludeHeader;<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Write</span>(<span class="hljs-params">DataRow row</span>)</span><br>        &#123;<br>            CreateWorkbookIfNewFile();<br><br>            <span class="hljs-keyword">var</span> rowHead = CreateHeadRowIfNewFileStartAndIncludeHeader();<br>            <span class="hljs-keyword">var</span> currentRow = CreateNewRow();<br>            <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; row.Table.Columns.Count; i++)<br>            &#123;<br>                <span class="hljs-keyword">if</span> (rowHead != <span class="hljs-literal">null</span>)<br>                &#123;<br>                    rowHead.CreateCell(i, CellType.String).SetCellValue(row.Table.Columns[i].ColumnName);<br>                &#125;<br>                CreateCellAndSetCellValue(currentRow, i, Type.GetTypeCode(row[i].GetType()), row[i]);<br>            &#125;<br><br>            SplitNewFileIfOverSheetMaxRow();<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Write</span>(<span class="hljs-params">DataRow row, Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; propertyDescDict</span>)</span><br>        &#123;<br>            CreateWorkbookIfNewFile();<br><br>            <span class="hljs-keyword">var</span> rowHead = CreateHeadRowIfNewFileStartAndIncludeHeader();<br>            <span class="hljs-keyword">var</span> currentRow = CreateNewRow();<br>            <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; row.Table.Columns.Count; i++)<br>            &#123;<br>                <span class="hljs-keyword">if</span> (rowHead != <span class="hljs-literal">null</span>)<br>                &#123;<br>                    <span class="hljs-built_in">string</span> name = row.Table.Columns[i].ColumnName;<br>                    <span class="hljs-keyword">if</span> (propertyDescDict.ContainsKey(name))<br>                    &#123;<br>                        rowHead.CreateCell(i, CellType.String).SetCellValue(propertyDescDict[name]);<br>                    &#125;<br>                    <span class="hljs-keyword">else</span><br>                    &#123;<br>                        rowHead.CreateCell(i, CellType.String).SetCellValue(name);<br>                    &#125;<br>                &#125;<br>                CreateCellAndSetCellValue(currentRow, i, Type.GetTypeCode(row[i].GetType()), row[i]);<br>            &#125;<br><br>            SplitNewFileIfOverSheetMaxRow();<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Write</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">T obj, <span class="hljs-built_in">bool</span> ignoreNotDescProperty, Func&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; descTranslationFunc</span>)</span><br>        &#123;<br>            CreateWorkbookIfNewFile();<br><br>            <span class="hljs-keyword">var</span> rowHead = CreateHeadRowIfNewFileStartAndIncludeHeader();<br>            <span class="hljs-keyword">var</span> currentRow = CreateNewRow();<br>            <span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>;<br>            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> propertyEmit <span class="hljs-keyword">in</span> obj.GetPropertyEmits().Values)<br>            &#123;<br>                <span class="hljs-keyword">var</span> attribute = (DescriptionAttribute)propertyEmit.Info.GetCustomAttributes(<span class="hljs-keyword">typeof</span>(DescriptionAttribute), <span class="hljs-literal">true</span>).FirstOrDefault();<br>                <span class="hljs-keyword">if</span> (ignoreNotDescProperty &amp;&amp; attribute == <span class="hljs-literal">null</span>)<br>                &#123;<br>                    <span class="hljs-keyword">continue</span>;<br>                &#125;<br>                <span class="hljs-keyword">if</span> (rowHead != <span class="hljs-literal">null</span>)<br>                &#123;<br>                    rowHead.CreateCell(i, CellType.String).SetCellValue(attribute == <span class="hljs-literal">null</span> ? propertyEmit.PropertyName : (descTranslationFunc == <span class="hljs-literal">null</span> ? attribute.Description : descTranslationFunc(attribute.Description)));<br>                &#125;<br>                CreateCellAndSetCellValue(currentRow, i, Type.GetTypeCode(propertyEmit.Info.PropertyType), propertyEmit.GetValue(obj));<br>                i++;<br>            &#125;<br><br>            SplitNewFileIfOverSheetMaxRow();<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Write</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">T obj, <span class="hljs-built_in">bool</span> ignoreNotDescProperty, CultureInfo culture, Func&lt;<span class="hljs-built_in">string</span>, CultureInfo, <span class="hljs-built_in">string</span>&gt; descTranslationFunc</span>)</span><br>        &#123;<br>            CreateWorkbookIfNewFile();<br><br>            <span class="hljs-keyword">var</span> rowHead = CreateHeadRowIfNewFileStartAndIncludeHeader();<br>            <span class="hljs-keyword">var</span> currentRow = CreateNewRow();<br>            <span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>;<br>            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> propertyEmit <span class="hljs-keyword">in</span> obj.GetPropertyEmits().Values)<br>            &#123;<br>                <span class="hljs-keyword">var</span> attribute = (DescriptionAttribute)propertyEmit.Info.GetCustomAttributes(<span class="hljs-keyword">typeof</span>(DescriptionAttribute), <span class="hljs-literal">true</span>).FirstOrDefault();<br>                <span class="hljs-keyword">if</span> (ignoreNotDescProperty &amp;&amp; attribute == <span class="hljs-literal">null</span>)<br>                &#123;<br>                    <span class="hljs-keyword">continue</span>;<br>                &#125;<br>                <span class="hljs-keyword">if</span> (rowHead != <span class="hljs-literal">null</span>)<br>                &#123;<br>                    rowHead.CreateCell(i, CellType.String).SetCellValue(attribute == <span class="hljs-literal">null</span> ? propertyEmit.PropertyName : (descTranslationFunc == <span class="hljs-literal">null</span> ? attribute.Description : descTranslationFunc(attribute.Description, culture)));<br>                &#125;<br>                CreateCellAndSetCellValue(currentRow, i, Type.GetTypeCode(propertyEmit.Info.PropertyType), propertyEmit.GetValue(obj));<br>                i++;<br>            &#125;<br><br>            SplitNewFileIfOverSheetMaxRow();<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Write</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">T obj, Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; propertyDescDict</span>)</span><br>        &#123;<br>            CreateWorkbookIfNewFile();<br><br>            <span class="hljs-keyword">var</span> propertyEmits = obj.GetPropertyEmits();<br>            <span class="hljs-keyword">var</span> rowHead = CreateHeadRowIfNewFileStartAndIncludeHeader();<br>            <span class="hljs-keyword">var</span> currentRow = CreateNewRow();<br>            <span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>;<br>            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> item <span class="hljs-keyword">in</span> propertyDescDict)<br>            &#123;<br>                <span class="hljs-keyword">if</span> (rowHead != <span class="hljs-literal">null</span>)<br>                &#123;<br>                    rowHead.CreateCell(i, CellType.String).SetCellValue(item.Value);<br>                &#125;<br>                <span class="hljs-keyword">var</span> propertyEmit = propertyEmits.Values.SingleOrDefault(s =&gt; s.PropertyName.Equals(item.Key));<br>                <span class="hljs-keyword">if</span> (propertyEmit != <span class="hljs-literal">null</span>)<br>                &#123;<br>                    CreateCellAndSetCellValue(currentRow, i, Type.GetTypeCode(propertyEmit.Info.PropertyType), propertyEmit.GetValue(obj));<br>                &#125;<br>                i++;<br>            &#125;<br><br>            SplitNewFileIfOverSheetMaxRow();<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">private</span> IRow <span class="hljs-title">CreateHeadRowIfNewFileStartAndIncludeHeader</span>()</span><br>        &#123;<br>            <span class="hljs-keyword">return</span> _isIncludeHeader &amp;&amp; _currentRowIndex == <span class="hljs-number">-1</span> ? CreateNewRow() : <span class="hljs-literal">null</span>;<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">private</span> IRow <span class="hljs-title">CreateNewRow</span>()</span><br>        &#123;<br>            _currentRowIndex++;<br>            <span class="hljs-keyword">return</span> _currentSheet.CreateRow(_currentRowIndex);<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">CreateWorkbookIfNewFile</span>()</span><br>        &#123;<br>            <span class="hljs-keyword">if</span> (_currentWorkbook == <span class="hljs-literal">null</span>)<br>            &#123;<br>                <span class="hljs-keyword">if</span> (!_workbookDict.ContainsKey(_currentFileSplitIndex))<br>                &#123;<br>                    _workbookDict.Add(_currentFileSplitIndex, <span class="hljs-keyword">new</span> SXSSFWorkbook(<span class="hljs-literal">null</span>, <span class="hljs-number">100</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">true</span>));<br>                &#125;<br>                _currentWorkbook = _workbookDict[_currentFileSplitIndex];<br>                _currentSheet = _currentWorkbook.CreateSheet(_sheetName);<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">SplitNewFileIfOverSheetMaxRow</span>()</span><br>        &#123;<br>            <span class="hljs-keyword">if</span> (_currentRowIndex + <span class="hljs-number">1</span> &gt;= _sheetMaxRow)<br>            &#123;<br>                _currentFileSplitIndex++;<br>                _currentRowIndex = <span class="hljs-number">-1</span>;<br>                _currentWorkbook = <span class="hljs-literal">null</span>;<br>                _currentSheet = <span class="hljs-literal">null</span>;<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">CreateCellAndSetCellValue</span>(<span class="hljs-params">IRow row, <span class="hljs-built_in">int</span> column, TypeCode cellValueType, <span class="hljs-built_in">object</span> cellValue</span>)</span><br>        &#123;<br>            <span class="hljs-keyword">switch</span> (cellValueType)<br>            &#123;<br>                <span class="hljs-keyword">case</span> TypeCode.Int16:<br>                <span class="hljs-keyword">case</span> TypeCode.UInt16:<br>                <span class="hljs-keyword">case</span> TypeCode.Int32:<br>                <span class="hljs-keyword">case</span> TypeCode.UInt32:<br>                <span class="hljs-keyword">case</span> TypeCode.Int64:<br>                <span class="hljs-keyword">case</span> TypeCode.UInt64:<br>                <span class="hljs-keyword">case</span> TypeCode.Single:<br>                <span class="hljs-keyword">case</span> TypeCode.Decimal:<br>                <span class="hljs-keyword">case</span> TypeCode.Double:<br>                    row.CreateCell(column, CellType.Numeric).SetCellValue(Convert.ToDouble(cellValue));<br>                    <span class="hljs-keyword">break</span>;<br>                <span class="hljs-literal">default</span>:<br>                    row.CreateCell(column, CellType.String).SetCellValue(cellValue.ToStringEx());<br>                    <span class="hljs-keyword">break</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-meta">#<span class="hljs-keyword">endregion</span></span><br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-built_in">int</span> _sheetMaxRow;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-built_in">bool</span> _isIncludeHeader;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> Dictionary&lt;<span class="hljs-built_in">int</span>, SXSSFWorkbook&gt; _workbookDict = <span class="hljs-keyword">new</span> Dictionary&lt;<span class="hljs-built_in">int</span>, SXSSFWorkbook&gt;();<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> Dictionary&lt;<span class="hljs-built_in">string</span>, SheetWriter&gt; _sheetWriterDict = <span class="hljs-keyword">new</span> Dictionary&lt;<span class="hljs-built_in">string</span>, SheetWriter&gt;();<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">AutoSplitExcelWriter</span>(<span class="hljs-params"><span class="hljs-built_in">int</span>? sheetMaxRow = <span class="hljs-number">1048576</span>, <span class="hljs-built_in">bool</span>? isIncludeHeader = <span class="hljs-literal">true</span></span>)</span><br>    &#123;<br>        <span class="hljs-keyword">if</span> (sheetMaxRow.HasValue)<br>            _sheetMaxRow = sheetMaxRow.Value;<br>        <span class="hljs-keyword">else</span><br>            _sheetMaxRow = <span class="hljs-number">1048576</span>;<br><br>        <span class="hljs-keyword">if</span> (isIncludeHeader.HasValue)<br>            _isIncludeHeader = isIncludeHeader.Value;<br>        <span class="hljs-keyword">else</span><br>            _isIncludeHeader = <span class="hljs-literal">false</span>;<br><br>        <span class="hljs-comment">//删除缓存文件</span><br>        DeleteWorkbookTempFile();<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Write</span>(<span class="hljs-params">DataRow row, <span class="hljs-built_in">string</span> sheetName = <span class="hljs-string">&quot;Sheet1&quot;</span></span>)</span><br>    &#123;<br>        GetSheetWriter(sheetName).Write(row);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Write</span>(<span class="hljs-params">DataTable dataTable, <span class="hljs-built_in">string</span> sheetName = <span class="hljs-string">&quot;Sheet1&quot;</span></span>)</span><br>    &#123;<br>        <span class="hljs-keyword">var</span> sheetWriter = GetSheetWriter(sheetName);<br>        <span class="hljs-keyword">foreach</span> (DataRow dr <span class="hljs-keyword">in</span> dataTable.Rows)<br>        &#123;<br>            sheetWriter.Write(dr);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">WriteByDataRow</span>(<span class="hljs-params">DataRow row, Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; propertyDescDict, <span class="hljs-built_in">string</span> sheetName = <span class="hljs-string">&quot;Sheet1&quot;</span></span>)</span><br>    &#123;<br>        GetSheetWriter(sheetName).Write(row, propertyDescDict);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Write</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">T obj, <span class="hljs-built_in">bool</span> ignoreNotDescProperty, Func&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; descTranslationFunc = <span class="hljs-literal">null</span>, <span class="hljs-built_in">string</span> sheetName = <span class="hljs-string">&quot;Sheet1&quot;</span></span>)</span><br>    &#123;<br>        GetSheetWriter(sheetName).Write(obj, ignoreNotDescProperty, descTranslationFunc);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">WriteCollection</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">IEnumerable&lt;T&gt; objs, <span class="hljs-built_in">bool</span> ignoreNotDescProperty, Func&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; descTranslationFunc = <span class="hljs-literal">null</span>, <span class="hljs-built_in">string</span> sheetName = <span class="hljs-string">&quot;Sheet1&quot;</span></span>)</span><br>    &#123;<br>        <span class="hljs-keyword">var</span> sheetWriter = GetSheetWriter(sheetName);<br>        <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> obj <span class="hljs-keyword">in</span> objs)<br>        &#123;<br>            sheetWriter.Write(obj, ignoreNotDescProperty, descTranslationFunc);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Write</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">T obj, <span class="hljs-built_in">bool</span> ignoreNotDescProperty, CultureInfo culture, Func&lt;<span class="hljs-built_in">string</span>, CultureInfo, <span class="hljs-built_in">string</span>&gt; descTranslationFunc, <span class="hljs-built_in">string</span> sheetName = <span class="hljs-string">&quot;Sheet1&quot;</span></span>)</span><br>    &#123;<br>        GetSheetWriter(sheetName).Write(obj, ignoreNotDescProperty, culture, descTranslationFunc);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">WriteCollection</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">IEnumerable&lt;T&gt; objs, <span class="hljs-built_in">bool</span> ignoreNotDescProperty, CultureInfo culture, Func&lt;<span class="hljs-built_in">string</span>, CultureInfo, <span class="hljs-built_in">string</span>&gt; descTranslationFunc, <span class="hljs-built_in">string</span> sheetName = <span class="hljs-string">&quot;Sheet1&quot;</span></span>)</span><br>    &#123;<br>        <span class="hljs-keyword">var</span> sheetWriter = GetSheetWriter(sheetName);<br>        <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> obj <span class="hljs-keyword">in</span> objs)<br>        &#123;<br>            sheetWriter.Write(obj, ignoreNotDescProperty, culture, descTranslationFunc);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Write</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">T obj, Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; propertyDescDict, <span class="hljs-built_in">string</span> sheetName = <span class="hljs-string">&quot;Sheet1&quot;</span></span>)</span><br>    &#123;<br>        GetSheetWriter(sheetName).Write(obj, propertyDescDict);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">WriteCollection</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">IEnumerable&lt;T&gt; objs, Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; propertyDescDict, <span class="hljs-built_in">string</span> sheetName = <span class="hljs-string">&quot;Sheet1&quot;</span></span>)</span><br>    &#123;<br>        <span class="hljs-keyword">var</span> sheetWriter = GetSheetWriter(sheetName);<br>        <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> obj <span class="hljs-keyword">in</span> objs)<br>        &#123;<br>            sheetWriter.Write(obj, propertyDescDict);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Save</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> path, <span class="hljs-built_in">bool</span> canOverride = <span class="hljs-literal">true</span></span>)</span><br>    &#123;<br>        <span class="hljs-keyword">var</span> fileName = Path.GetFileNameWithoutExtension(path);<br>        <span class="hljs-keyword">var</span> directoryName = Path.GetDirectoryName(path);<br><br>        <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> item <span class="hljs-keyword">in</span> _workbookDict)<br>        &#123;<br>            <span class="hljs-keyword">var</span> fullPath = _workbookDict.Count &gt; <span class="hljs-number">1</span><br>                ? <span class="hljs-string">$&quot;<span class="hljs-subst">&#123;directoryName&#125;</span>/<span class="hljs-subst">&#123;fileName&#125;</span>-<span class="hljs-subst">&#123;item.Key + <span class="hljs-number">1</span>&#125;</span>.xlsx&quot;</span><br>                : <span class="hljs-string">$&quot;<span class="hljs-subst">&#123;directoryName&#125;</span>/<span class="hljs-subst">&#123;fileName&#125;</span>.xlsx&quot;</span>;<br><br>            <span class="hljs-keyword">if</span> (canOverride)<br>            &#123;<br>                <span class="hljs-keyword">if</span> (File.Exists(fullPath))<br>                &#123;<br>                    File.Delete(fullPath);<br>                &#125;<br>            &#125;<br><br>            <span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> fileStream = <span class="hljs-keyword">new</span> FileStream(fullPath, FileMode.CreateNew))<br>            &#123;<br>                item.Value.Write(fileStream);<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Save</span>(<span class="hljs-params">Func&lt;<span class="hljs-built_in">int</span>, Stream&gt; saveStreamCreator, Action&lt;<span class="hljs-built_in">int</span>, Stream&gt; savedCallback = <span class="hljs-literal">null</span>, Action&lt;<span class="hljs-built_in">int</span>, Exception&gt; failedCallback = <span class="hljs-literal">null</span></span>)</span><br>    &#123;<br>        <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> item <span class="hljs-keyword">in</span> _workbookDict)<br>        &#123;<br>            <span class="hljs-keyword">try</span><br>            &#123;<br>                <span class="hljs-keyword">using</span> <span class="hljs-keyword">var</span> stream = saveStreamCreator(item.Key);<br>                item.Value.Write(stream);<br>                savedCallback?.Invoke(item.Key, stream);<br>                stream.Dispose();<br>            &#125;<br>            <span class="hljs-keyword">catch</span> (Exception ex)<br>            &#123;<br>                failedCallback?.Invoke(item.Key, ex);<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Save</span>(<span class="hljs-params">Func&lt;<span class="hljs-built_in">int</span>, <span class="hljs-built_in">string</span>&gt; fileNameCreator, Action&lt;<span class="hljs-built_in">int</span>, <span class="hljs-built_in">string</span>, FileStream&gt; savedCallback = <span class="hljs-literal">null</span>, Action&lt;<span class="hljs-built_in">int</span>, <span class="hljs-built_in">string</span>, Exception&gt; failedCallback = <span class="hljs-literal">null</span></span>)</span><br>    &#123;<br>        <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> item <span class="hljs-keyword">in</span> _workbookDict)<br>        &#123;<br>            <span class="hljs-keyword">var</span> fileName = fileNameCreator(item.Key);<br><br>            <span class="hljs-keyword">try</span><br>            &#123;<br>                <span class="hljs-keyword">var</span> dir = Path.GetDirectoryName(fileName);<br>                <span class="hljs-keyword">if</span> (!Directory.Exists(dir))<br>                &#123;<br>                    Directory.CreateDirectory(dir);<br>                &#125;<br>                <span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> fileStream = <span class="hljs-keyword">new</span> FileStream(fileName, FileMode.Create))<br>                &#123;<br>                    item.Value.Write(fileStream);<span class="hljs-comment">//这里写入后就会自动关闭文件流，只能重新打开进行savedCallback</span><br>                    fileStream.Dispose();<br>                &#125;<br><br>                <span class="hljs-keyword">if</span> (savedCallback != <span class="hljs-literal">null</span>)<br>                &#123;<br>                    <span class="hljs-keyword">using</span> <span class="hljs-keyword">var</span> fileStream = <span class="hljs-keyword">new</span> FileStream(fileName, FileMode.Open);<br>                    savedCallback(item.Key, fileName, fileStream);<br>                    fileStream.Dispose();<br>                &#125;<br>            &#125;<br>            <span class="hljs-keyword">catch</span> (Exception ex)<br>            &#123;<br>                failedCallback?.Invoke(item.Key, fileName, ex);<br>                <span class="hljs-keyword">try</span><br>                &#123;<br>                    <span class="hljs-keyword">if</span> (File.Exists(fileName))<br>                    &#123;<br>                        File.Delete(fileName);<br>                    &#125;<br>                &#125;<br>                <span class="hljs-keyword">catch</span> &#123; &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">CompressSave</span>(<span class="hljs-params">ZipOutputStream zipOutputStream, Func&lt;<span class="hljs-built_in">int</span>, <span class="hljs-built_in">string</span>&gt; tempfileNameCreator, Func&lt;<span class="hljs-built_in">int</span>, <span class="hljs-built_in">string</span>&gt; zipEntryNameCreator = <span class="hljs-literal">null</span>, Func&lt;DateTime&gt; zipEntryDateTimeCreator = <span class="hljs-literal">null</span></span>)</span><br>    &#123;<br>        Save(tempfileNameCreator, (i, tempFileName, tempFileStream) =&gt;<br>        &#123;<br>            Crc32 crc = <span class="hljs-keyword">new</span> Crc32();<br>            crc.Reset();<br>            <span class="hljs-keyword">var</span> zipEntryName = zipEntryNameCreator == <span class="hljs-literal">null</span> ? Path.GetFileName(tempFileName) : zipEntryNameCreator(i);<br>            ZipEntry entry = <span class="hljs-keyword">new</span> ZipEntry(zipEntryName);<br>            entry.DateTime = zipEntryDateTimeCreator == <span class="hljs-literal">null</span> ? DateTime.Now : zipEntryDateTimeCreator();<br>            entry.Size = tempFileStream.Length;<br>            zipOutputStream.PutNextEntry(entry);<br>            <span class="hljs-keyword">var</span> bufferSize = <span class="hljs-number">2048</span>;<br>            <span class="hljs-keyword">var</span> buffer = <span class="hljs-keyword">new</span> <span class="hljs-built_in">byte</span>[bufferSize];<br>            <span class="hljs-keyword">while</span> (bufferSize &gt; <span class="hljs-number">0</span>)<br>            &#123;<br>                bufferSize = tempFileStream.Read(buffer, <span class="hljs-number">0</span>, bufferSize);<br>                zipOutputStream.Write(buffer, <span class="hljs-number">0</span>, bufferSize);<br>                crc.Update(<span class="hljs-keyword">new</span> ArraySegment&lt;<span class="hljs-built_in">byte</span>&gt;(buffer, <span class="hljs-number">0</span>, bufferSize));<br>            &#125;<br>            entry.Crc = crc.Value;<br><br>            tempFileStream.Dispose();<span class="hljs-comment">//注意，这里必须释放后才能进行删除文件</span><br>            File.Delete(tempFileName);<br>        &#125;, (i, tempFileName, ex) =&gt;<br>        &#123;<br>            <span class="hljs-keyword">try</span><br>            &#123;<br>                <span class="hljs-keyword">if</span> (File.Exists(tempFileName))<br>                &#123;<br>                    File.Delete(tempFileName);<br>                &#125;<br>            &#125;<br>            <span class="hljs-keyword">catch</span> &#123; &#125;<br>        &#125;);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Dispose</span>()</span><br>    &#123;<br>        <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> item <span class="hljs-keyword">in</span> _workbookDict)<br>        &#123;<br>            item.Value.Dispose();<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">DeleteWorkbookTempFile</span>()</span><br>    &#123;<br>        <span class="hljs-keyword">try</span><br>        &#123;<br>            <span class="hljs-keyword">var</span> baseTempPath = Path.GetTempPath();<br><br>            <span class="hljs-keyword">var</span> currentTempFolderPath = Path.Combine(baseTempPath, <span class="hljs-string">&quot;poifiles&quot;</span>);<br><br>            <span class="hljs-keyword">var</span> dyInfo = <span class="hljs-keyword">new</span> DirectoryInfo(currentTempFolderPath);<br><br>            <span class="hljs-keyword">foreach</span> (FileInfo feInfo <span class="hljs-keyword">in</span> dyInfo.GetFiles())<br>            &#123;<br>                <span class="hljs-keyword">if</span> (feInfo.CreationTime &lt; DateTime.Now.AddDays(<span class="hljs-number">-1</span>))<br>                    feInfo.Delete();<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">catch</span><br>        &#123; &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> SheetWriter <span class="hljs-title">GetSheetWriter</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> sheetName</span>)</span><br>    &#123;<br>        <span class="hljs-keyword">if</span> (!_sheetWriterDict.ContainsKey(sheetName))<br>        &#123;<br>            _sheetWriterDict.Add(sheetName, <span class="hljs-keyword">new</span> SheetWriter(sheetName, _sheetMaxRow, _workbookDict, _isIncludeHeader));<br>        &#125;<br>        <span class="hljs-keyword">return</span> _sheetWriterDict[sheetName];<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<h2 id="调用方法-2"><a href="#调用方法-2" class="headerlink" title="调用方法"></a>调用方法</h2><p>（1）Home控制器方法代码如下：</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">ExcelOutput3</span>()</span><br>&#123;<br>    <span class="hljs-keyword">var</span> localTempDir = <span class="hljs-string">$@&quot;<span class="hljs-subst">&#123;_hostEnvironment.ContentRootPath&#125;</span>\App_Data\TempFile&quot;</span>;<br>    <span class="hljs-keyword">if</span> (!Directory.Exists(localTempDir))<br>    &#123;<br>        Directory.CreateDirectory(localTempDir);<br>    &#125;<br><br>    <span class="hljs-keyword">var</span> header = GetExportHeaderV2();<br>    <span class="hljs-keyword">using</span> AutoSplitExcelWriter writer = <span class="hljs-keyword">new</span> AutoSplitExcelWriter();<br><br>    <span class="hljs-comment">//假设在大数据量的环境下导出，在后端分页，每次单独查询数据库获取要导出的数据，写入临时构造文件</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++)<br>    &#123;<br>        <span class="hljs-keyword">var</span> datas = GetTestDataV2();<span class="hljs-comment">//获取需要导出的数据，这里只是举例数据写死，实际可以换成数据库查询</span><br>        writer.WriteCollection(datas, <span class="hljs-literal">true</span>, f =&gt; header.ContainsKey(f) ? header[f] : f);<span class="hljs-comment">//descTranslationFunc指定切换显示表头的表达式，这里就是根据对象中的Description特性的值对应字典的key来拿到字典的Value</span><br>        GC.Collect();<br>    &#125;<br><br>    <span class="hljs-built_in">string</span> guid = Guid.NewGuid().ToString();<br>    writer.Save((fileIndex) =&gt;<br>    &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> FileStream(<span class="hljs-string">$&quot;<span class="hljs-subst">&#123;localTempDir&#125;</span>\\<span class="hljs-subst">&#123;guid&#125;</span>&quot;</span>, FileMode.Create);<span class="hljs-comment">//将临时写入的文件生成到指定路径</span><br>    &#125;);<br><br>    <span class="hljs-keyword">return</span> Json(guid);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">DownloadFile</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> key, <span class="hljs-built_in">string</span> contentType, <span class="hljs-built_in">string</span> fileName</span>)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> File(<span class="hljs-keyword">new</span> FileStream(<span class="hljs-string">$@&quot;<span class="hljs-subst">&#123;_hostEnvironment.ContentRootPath&#125;</span>\App_Data\TempFile\<span class="hljs-subst">&#123;key&#125;</span>&quot;</span>, FileMode.Open, FileAccess.Read), contentType, fileName);<br>&#125;<br><br><br><span class="hljs-function"><span class="hljs-keyword">private</span> Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; <span class="hljs-title">GetExportHeaderV2</span>()</span><br>&#123;<br>    <span class="hljs-comment">//Id，Password，UpdateTime，这3个字段不导出</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Dictionary&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;<br>    &#123;<br>        &#123; <span class="hljs-string">&quot;User Name&quot;</span>, <span class="hljs-string">&quot;用户名&quot;</span> &#125;,<br>        &#123; <span class="hljs-string">&quot;Email Address&quot;</span>, <span class="hljs-string">&quot;邮箱&quot;</span> &#125;,<br>        &#123; <span class="hljs-string">&quot;Surname&quot;</span>, <span class="hljs-string">&quot;姓氏&quot;</span> &#125;,<br>        &#123; <span class="hljs-string">&quot;Name&quot;</span>, <span class="hljs-string">&quot;名字&quot;</span> &#125;,<br>        &#123; <span class="hljs-string">&quot;Age&quot;</span>, <span class="hljs-string">&quot;年龄&quot;</span> &#125;,<br>        &#123; <span class="hljs-string">&quot;Default Lanuage&quot;</span>, <span class="hljs-string">&quot;默认语言&quot;</span> &#125;,<br>        &#123; <span class="hljs-string">&quot;Address&quot;</span>, <span class="hljs-string">&quot;地址&quot;</span> &#125;,<br>        &#123; <span class="hljs-string">&quot;Phone Number&quot;</span>, <span class="hljs-string">&quot;手机号码&quot;</span> &#125;,<br>        &#123; <span class="hljs-string">&quot;Create Time&quot;</span>, <span class="hljs-string">&quot;创建时间&quot;</span> &#125;,<br>    &#125;;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">private</span> List&lt;UserModel&gt; <span class="hljs-title">GetTestDataV2</span>()</span><br>&#123;<br>    <span class="hljs-keyword">var</span> list = <span class="hljs-keyword">new</span> List&lt;UserModel&gt;();<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">1000</span>; i++)<br>    &#123;<br>        list.Add(<span class="hljs-keyword">new</span> UserModel<br>        &#123;<br>            Id = i + <span class="hljs-number">1</span>,<br>            UserName = <span class="hljs-string">$&quot;Test<span class="hljs-subst">&#123;i&#125;</span>&quot;</span>,<br>            EmailAddress = <span class="hljs-string">$&quot;Test<span class="hljs-subst">&#123;i&#125;</span>@Test<span class="hljs-subst">&#123;i&#125;</span>.com&quot;</span>,<br>            Password = <span class="hljs-string">&quot;123qwe!Q&quot;</span>,<br>            Surname = <span class="hljs-string">$&quot;Surname<span class="hljs-subst">&#123;i&#125;</span>&quot;</span>,<br>            Name = <span class="hljs-string">$&quot;Name<span class="hljs-subst">&#123;i&#125;</span>&quot;</span>,<br>            Age = <span class="hljs-number">18</span>,<br>            DefaultLanuage = <span class="hljs-string">&quot;en&quot;</span>,<br>            Address = <span class="hljs-string">&quot;USA&quot;</span>,<br>            PhoneNumber = i.ToString().PadLeft(<span class="hljs-number">6</span>, <span class="hljs-string">&#x27;0&#x27;</span>),<br>            CreateTime = DateTime.Now.AddDays(<span class="hljs-number">-1</span>),<br>            UpdateTime = DateTime.Now,<br>        &#125;);<br>    &#125;<br>    <span class="hljs-keyword">return</span> list;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>（2）UserModel对象代码如下：</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">UserModel</span><br>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> Id &#123; <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; &#125;<br><br>    [<span class="hljs-meta">Description(<span class="hljs-string">&quot;User Name&quot;</span>)</span>]<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> UserName &#123; <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; &#125;<br><br>    [<span class="hljs-meta">Description(<span class="hljs-string">&quot;Email Address&quot;</span>)</span>]<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> EmailAddress &#123; <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Password &#123; <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; &#125;<br><br>    [<span class="hljs-meta">Description(<span class="hljs-string">&quot;Surname&quot;</span>)</span>]<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Surname &#123; <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; &#125;<br><br>    [<span class="hljs-meta">Description(<span class="hljs-string">&quot;Name&quot;</span>)</span>]<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Name &#123;  <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; &#125;<br><br>    [<span class="hljs-meta">Description(<span class="hljs-string">&quot;Age&quot;</span>)</span>]<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> Age &#123; <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; &#125;<br><br>    [<span class="hljs-meta">Description(<span class="hljs-string">&quot;Default Lanuage&quot;</span>)</span>]<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> DefaultLanuage &#123; <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; &#125;<br><br>    [<span class="hljs-meta">Description(<span class="hljs-string">&quot;Address&quot;</span>)</span>]<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Address &#123; <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; &#125;<br><br>    [<span class="hljs-meta">Description(<span class="hljs-string">&quot;Phone Number&quot;</span>)</span>]<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> PhoneNumber &#123; <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; &#125;<br><br>    [<span class="hljs-meta">Description(<span class="hljs-string">&quot;Create Time&quot;</span>)</span>]<br>    <span class="hljs-keyword">public</span> DateTime CreateTime &#123; <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; &#125;<br><br>    <span class="hljs-keyword">public</span> DateTime UpdateTime &#123; <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>（3）Index.cshtml视图代码如下：</p>
+<details><summary>Show Code</summary>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs C#">&lt;div <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;text-center&quot;</span>&gt;<br>    &lt;h1 <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;display-4&quot;</span>&gt;Excel导入导出测试&lt;/h1&gt;<br>    &lt;div&gt;<br>        <span class="hljs-comment">//......省略其他代码</span><br>        &lt;p&gt;<br>            &lt;button onclick=<span class="hljs-string">&quot;ExcelOutput(1)&quot;</span>&gt;测试文件导出<span class="hljs-number">1</span>&lt;/button&gt;<br>            &lt;button onclick=<span class="hljs-string">&quot;ExcelOutput(2)&quot;</span>&gt;测试文件导出<span class="hljs-number">2</span>&lt;/button&gt;<br>            &lt;button onclick=<span class="hljs-string">&quot;ExcelOutput(3)&quot;</span>&gt;测试文件导出<span class="hljs-number">3</span>&lt;/button&gt;<br>        &lt;/p&gt;<br>    &lt;/div&gt;<br>    &lt;pre id=<span class="hljs-string">&quot;showDiv&quot;</span>&gt;<br><br>    &lt;/pre&gt;<br>&lt;/div&gt;<br><br>&lt;script&gt;<br>    <span class="hljs-function">function <span class="hljs-title">ExcelOutput</span>(<span class="hljs-params">way</span>)</span> &#123;<br>        <span class="hljs-keyword">if</span> (way == <span class="hljs-number">1</span>) &#123;<br>            <span class="hljs-comment">//后端简单导出一个Sheet页内容</span><br>            <span class="hljs-comment">//返回二进制流，在前端构造文件下载链接</span><br>            $.ajax(&#123;<br>                url: <span class="hljs-string">&#x27;/Home/ExcelOutput1&#x27;</span>,<br>                type: <span class="hljs-string">&#x27;get&#x27;</span>,<br>                data: &#123;&#125;,<br>                success: function (res) &#123;<br>                    <span class="hljs-keyword">var</span> fileName = <span class="hljs-string">&quot;File&quot;</span> + GetDateNow() + <span class="hljs-string">&quot;.xlsx&quot;</span>;<br>                    exportFileByBlob(res, fileName, <span class="hljs-string">&quot;application/vnd.ms-excel&quot;</span>);<br>                &#125;<br>            &#125;);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (way == <span class="hljs-number">2</span>) &#123;<br>            <span class="hljs-comment">//后端简单导出多个Sheet页内容</span><br>            <span class="hljs-comment">//返回文件流</span><br>            location.href = <span class="hljs-string">&quot;/Home/ExcelOutput2&quot;</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (way ==<span class="hljs-number">3</span>) &#123;<br>            <span class="hljs-comment">//大数据导出</span><br>            $.ajax(&#123;<br>                url: <span class="hljs-string">&#x27;/Home/ExcelOutput3&#x27;</span>,<br>                type: <span class="hljs-string">&#x27;get&#x27;</span>,<br>                data: &#123;&#125;,<br>                success: function (res) &#123;<br>                    <span class="hljs-keyword">var</span> fileName = <span class="hljs-string">&quot;File&quot;</span> + GetDateNow() + <span class="hljs-string">&quot;.xlsx&quot;</span>;<br>                    location.href = <span class="hljs-string">&quot;/Home/DownloadFile?key=&quot;</span> + res + <span class="hljs-string">&quot;&amp;contentType=application/vnd.ms-excel&amp;fileName=&quot;</span> + fileName<br>                &#125;<br>            &#125;);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function">function <span class="hljs-title">GetDateNow</span>()</span> &#123;<br>        <span class="hljs-keyword">const</span> now = <span class="hljs-keyword">new</span> Date();<br><br>        <span class="hljs-keyword">const</span> year = now.getFullYear();<br>        <span class="hljs-keyword">const</span> month = (<span class="hljs-string">&#x27;0&#x27;</span> + (now.getMonth() + <span class="hljs-number">1</span>)).slice(<span class="hljs-number">-2</span>);<br>        <span class="hljs-keyword">const</span> day = (<span class="hljs-string">&#x27;0&#x27;</span> + now.getDate()).slice(<span class="hljs-number">-2</span>);<br>        <span class="hljs-keyword">const</span> hours = (<span class="hljs-string">&#x27;0&#x27;</span> + now.getHours()).slice(<span class="hljs-number">-2</span>);<br>        <span class="hljs-keyword">const</span> minutes = (<span class="hljs-string">&#x27;0&#x27;</span> + now.getMinutes()).slice(<span class="hljs-number">-2</span>);<br>        <span class="hljs-keyword">const</span> seconds = (<span class="hljs-string">&#x27;0&#x27;</span> + now.getSeconds()).slice(<span class="hljs-number">-2</span>);<br><br>        <span class="hljs-keyword">const</span> formattedTime = year + month + day + hours + minutes + seconds;<br>        <span class="hljs-keyword">return</span> formattedTime;<br>    &#125;<br>&lt;/script&gt;<br></code></pre></td></tr></table></figure>
+
+</details>
+
+<p>注意:</p>
+<ul>
+<li>writer.WriteCollection方法中，ignoreNotDescProperty参数可以指定是否忽略没有特性的属性，T泛型对象中给属性标记特性时，不需要导出的字段不标记特性，然后ignoreNotDescProperty&#x3D;true开启这个功能，descTranslationFunc参数是可以自定义表头的显示值切换逻辑，具体可以看demo怎么使用</li>
+<li>writer.Save中实现文件的保存逻辑，样例中是保存到一个临时路径</li>
+</ul>
+<h3 id="解析说明-2"><a href="#解析说明-2" class="headerlink" title="解析说明"></a>解析说明</h3><p>关于大批量数据的导出，使用的是SXSSFWorkbook相关封装，本质的逻辑是每次循环写入数据到一个临时文件，待数据都写入完毕时候，保存到指定路径。这里举例导出大批量数据的一个逻辑，前端请求时，后端使用SXSSFWorkbook封装的方法进行导出，导出成实际文件生成到一个指定的临时路径下，一般情况下会存放到App_Data文件夹下，然后返回文件相关的key（这里是一个GUID），前端接收到文件key之后再请求一个下载文件的接口，传入文件key、文件类型、文件名，然后下载方法再去通过文件key去临时路径拿到实际文件再按正常的读取流的方式来导出，以上可以尽量做到少的内容占用，基本都是占用系统磁盘空间</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/" class="category-chain-item">经验总结</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Excel/" class="print-no-link">#Excel</a>
+      
+        <a href="/tags/NPOI/" class="print-no-link">#NPOI</a>
+      
+        <a href="/tags/SXSSFWorkbook/" class="print-no-link">#SXSSFWorkbook</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>《1》经验总结-Excel导入导出</div>
+      <div>http://example.com/2024/01/20/SummaryExcel/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>YuMan-LJP</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年1月20日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/01/20/SummaryPropertyEqualityComparer/" title="《2》经验总结-属性相等比较">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">《2》经验总结-属性相等比较</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/01/10/StudyVueIdentityServer4/" title="【3】学习IdentityServer4，搭建授权认证系统">
+                        <span class="hidden-mobile">【3】学习IdentityServer4，搭建授权认证系统</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
